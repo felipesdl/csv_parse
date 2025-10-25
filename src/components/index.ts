@@ -4,3 +4,4 @@ export { ErrorAlert } from "./ErrorAlert";
 export { ImporterDashboard } from "./ImporterDashboard";
 export { Modal } from "./Modal";
 export { AdvancedFiltersModal } from "./AdvancedFiltersModal";
+export { ValueDistributionChart } from "./ValueDistributionChart";

@@ -8,6 +8,8 @@ import { exportToCSV, copyToClipboardWithoutHeaders, copyColumnToClipboard, getV
 import { formatValue } from "@/utils/formatUtils";
 import { AdvancedFiltersModal } from "./AdvancedFiltersModal";
 import { FormattingPanel } from "./FormattingPanel";
+import { ValueDistributionChart } from "./ValueDistributionChart";
+import { useCopyToClipboard } from "@/hooks/useCSVOperations";
 
 interface ColumnFilter {
   id: string;
@@ -113,13 +115,39 @@ export function DataTable() {
     exportToCSV(rowsToExport, visibleColumns, filename, ";", formatSettings);
   }, [selectedRowIndices, filteredData, tableData.bank, visibleColumns, formatSettings]);
 
-  const handleCopyToClipboard = useCallback(async () => {
+  // TanStack Query mutation para clipboard
+  const { mutate: copyWithQuery } = useCopyToClipboard();
+
+  const handleCopyToClipboard = useCallback(() => {
     const rowsToExport = selectedRowIndices.length > 0 ? selectedRowIndices.map((idx) => filteredData[idx]) : filteredData;
-    const success = await copyToClipboardWithoutHeaders(rowsToExport, visibleColumns, "\t", formatSettings);
-    if (success) {
-      alert("Dados copiados para a área de transferência!");
-    }
-  }, [selectedRowIndices, filteredData, visibleColumns, formatSettings]);
+
+    // Preparar texto sem headers
+    const lines = rowsToExport.map((row) => {
+      return visibleColumns
+        .map((col) => {
+          const value = row[col] ?? "";
+          const strValue = formatValue(String(value), formatSettings);
+
+          if (strValue.includes("\t") || strValue.includes('"') || strValue.includes("\n")) {
+            return `"${strValue.replace(/"/g, '""')}"`;
+          }
+          return strValue;
+        })
+        .join("\t");
+    });
+
+    const fullText = lines.join("\n");
+
+    // Usar mutation do TanStack Query
+    copyWithQuery(fullText, {
+      onSuccess: () => {
+        alert("Dados copiados para a área de transferência!");
+      },
+      onError: () => {
+        alert("Erro ao copiar para clipboard");
+      },
+    });
+  }, [selectedRowIndices, filteredData, visibleColumns, formatSettings, copyWithQuery]);
 
   const handleDeleteSelected = useCallback(() => {
     if (selectedRowIndices.length > 0 && confirm(`Deletar ${selectedRowIndices.length} linha(s)?`)) {
@@ -149,13 +177,24 @@ export function DataTable() {
   }, []);
 
   const handleCopyColumn = useCallback(
-    async (columnName: string) => {
-      const success = await copyColumnToClipboard(filteredData, columnName, formatSettings);
-      if (success) {
-        alert(`Coluna "${columnName}" copiada para a área de transferência!`);
-      }
+    (columnName: string) => {
+      const values = filteredData.map((row) => {
+        const value = row[columnName] ?? "";
+        return formatValue(String(value), formatSettings);
+      });
+
+      const fullText = values.join("\n");
+
+      copyWithQuery(fullText, {
+        onSuccess: () => {
+          alert(`Coluna "${columnName}" copiada para a área de transferência!`);
+        },
+        onError: () => {
+          alert("Erro ao copiar coluna");
+        },
+      });
     },
-    [filteredData, formatSettings]
+    [filteredData, formatSettings, copyWithQuery]
   );
 
   const duplicateRows = filteredData.filter((row: any) => row.isDuplicate);
@@ -178,106 +217,120 @@ export function DataTable() {
   return (
     <>
       <div className="space-y-4">
-        <div className="bg-white p-4 rounded-lg border border-gray-300 space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div>
-              <p className="text-gray-700 font-medium">Banco</p>
-              <p className="font-semibold text-lg text-gray-900">{tableData.bank}</p>
-            </div>
-            <div>
-              <p className="text-gray-700 font-medium">Período</p>
-              <p className="font-semibold text-lg text-gray-900">{tableData.month}</p>
-            </div>
-            <div>
-              <p className="text-gray-700 font-medium">Total de linhas</p>
-              <p className="font-semibold text-lg text-gray-900">{filteredData.length}</p>
-            </div>
-            <div>
-              <p className="text-gray-700 font-medium">Duplicatas</p>
-              <p className={`font-semibold text-lg ${duplicateRows.length > 0 ? "text-red-600" : "text-green-600"}`}>{duplicateRows.length}</p>
-            </div>
-          </div>
+        {/* Layout 60/40: Info + Filtros (60%) + Gráfico (40%) */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+          {/* Info e Filtros - 60% (3 colunas de 5) */}
+          <div className="lg:col-span-3 space-y-4">
+            <div className="bg-white p-4 rounded-lg border border-gray-300 space-y-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <p className="text-gray-700 font-medium">Banco</p>
+                  <p className="font-semibold text-lg text-gray-900">{tableData.bank}</p>
+                </div>
+                <div>
+                  <p className="text-gray-700 font-medium">Período</p>
+                  <p className="font-semibold text-lg text-gray-900">{tableData.month}</p>
+                </div>
+                <div>
+                  <p className="text-gray-700 font-medium">Total de linhas</p>
+                  <p className="font-semibold text-lg text-gray-900">{filteredData.length}</p>
+                </div>
+                <div>
+                  <p className="text-gray-700 font-medium">Duplicatas</p>
+                  <p className={`font-semibold text-lg ${duplicateRows.length > 0 ? "text-red-600" : "text-green-600"}`}>{duplicateRows.length}</p>
+                </div>
+              </div>
 
-          <div className="flex flex-wrap gap-2">
-            {selectedRowIndices.length > 0 && (
-              <div className="flex gap-2 items-center px-3 py-2 bg-blue-50 rounded text-sm text-blue-800 border border-blue-200">
-                <span className="font-medium">{selectedRowIndices.length} linha(s)</span>
-                <button onClick={handleDeleteSelected} className="ml-2 p-1 hover:bg-blue-200 rounded">
-                  <Trash2 size={16} />
+              <div className="flex flex-wrap gap-2">
+                {selectedRowIndices.length > 0 && (
+                  <div className="flex gap-2 items-center px-3 py-2 bg-blue-50 rounded text-sm text-blue-800 border border-blue-200">
+                    <span className="font-medium">{selectedRowIndices.length} linha(s)</span>
+                    <button onClick={handleDeleteSelected} className="ml-2 p-1 hover:bg-blue-200 rounded cursor-pointer">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                )}
+                <button
+                  onClick={handleCopyToClipboard}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium cursor-pointer"
+                >
+                  <Copy size={18} />
+                  Copiar
+                </button>
+                <button
+                  onClick={handleExportCSV}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium cursor-pointer"
+                >
+                  <Download size={18} />
+                  Exportar CSV
+                </button>
+                <button
+                  onClick={() => setShowFiltersModal(true)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded text-sm font-medium cursor-pointer ${
+                    advancedFilters.length > 0 ? "bg-purple-600 text-white" : "bg-gray-200 text-gray-900 hover:bg-gray-300"
+                  }`}
+                >
+                  <Filter size={18} />
+                  Filtros {advancedFilters.length > 0 && `(${advancedFilters.length})`}
                 </button>
               </div>
-            )}
-            <button
-              onClick={handleCopyToClipboard}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium"
-            >
-              <Copy size={18} />
-              Copiar
-            </button>
-            <button
-              onClick={handleExportCSV}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium"
-            >
-              <Download size={18} />
-              Exportar CSV
-            </button>
-            <button
-              onClick={() => setShowFiltersModal(true)}
-              className={`flex items-center gap-2 px-4 py-2 rounded text-sm font-medium ${
-                advancedFilters.length > 0 ? "bg-purple-600 text-white" : "bg-gray-200 text-gray-900 hover:bg-gray-300"
-              }`}
-            >
-              <Filter size={18} />
-              Filtros {advancedFilters.length > 0 && `(${advancedFilters.length})`}
-            </button>
-          </div>
 
-          <input
-            type="text"
-            placeholder="Filtrar dados..."
-            value={filterValue}
-            onChange={(e) => setFilterValue(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded text-sm text-gray-900 placeholder:text-gray-600"
-          />
+              <input
+                type="text"
+                placeholder="Filtrar dados..."
+                value={filterValue}
+                onChange={(e) => setFilterValue(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm text-gray-900 placeholder:text-gray-600"
+              />
 
-          <FormattingPanel />
+              <FormattingPanel />
 
-          {advancedFilters.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {advancedFilters.map((filter) => (
-                <div key={filter.id} className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-900 rounded text-sm border">
-                  <span className="font-medium">
-                    {filter.column}: {filter.values?.join(", ") || filter.value}
-                  </span>
-                  <button onClick={() => removeAdvancedFilter(filter.id)} className="p-0.5 hover:bg-purple-200 rounded">
-                    ✕
+              {advancedFilters.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {advancedFilters.map((filter) => (
+                    <div key={filter.id} className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-900 rounded text-sm border">
+                      <span className="font-medium">
+                        {filter.column}: {filter.values?.join(", ") || filter.value}
+                      </span>
+                      <button onClick={() => removeAdvancedFilter(filter.id)} className="p-0.5 hover:bg-purple-200 rounded cursor-pointer">
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                  <button onClick={clearAllFilters} className="px-3 py-1 bg-red-500 text-white rounded text-sm font-medium hover:bg-red-600 cursor-pointer">
+                    Limpar todos
                   </button>
                 </div>
-              ))}
-              <button onClick={clearAllFilters} className="px-3 py-1 bg-red-500 text-white rounded text-sm font-medium hover:bg-red-600">
-                Limpar todos
-              </button>
-            </div>
-          )}
+              )}
 
-          <div className="flex flex-wrap gap-2">
-            {tableData.columns.map((col) => {
-              const setting = columnSettings.find((s) => s.name === col);
-              const isVisible = setting?.visible ?? true;
-              return (
-                <button
-                  key={col}
-                  onClick={() => updateColumnVisibility(col, !isVisible)}
-                  className={`flex items-center gap-2 px-3 py-1 rounded text-sm font-medium ${isVisible ? "bg-gray-700 text-white" : "bg-gray-400 text-white"}`}
-                >
-                  {isVisible ? <Eye size={14} /> : <EyeOff size={14} />}
-                  {col}
-                </button>
-              );
-            })}
+              <div className="flex flex-wrap gap-2">
+                {tableData.columns.map((col) => {
+                  const setting = columnSettings.find((s) => s.name === col);
+                  const isVisible = setting?.visible ?? true;
+                  return (
+                    <button
+                      key={col}
+                      onClick={() => updateColumnVisibility(col, !isVisible)}
+                      className={`flex items-center gap-2 px-3 py-1 rounded text-sm font-medium cursor-pointer ${
+                        isVisible ? "bg-gray-700 text-white" : "bg-gray-400 text-white"
+                      }`}
+                    >
+                      {isVisible ? <Eye size={14} /> : <EyeOff size={14} />}
+                      {col}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Gráfico - 40% (2 colunas de 5) */}
+          <div className="lg:col-span-2">
+            <ValueDistributionChart data={filteredData as (ParsedRow & { isDuplicate?: boolean })[]} advancedFilters={advancedFilters} />
           </div>
         </div>
 
+        {/* Tabela - 100% de largura abaixo */}
         <div className="overflow-x-auto bg-white rounded-lg border border-gray-300">
           <table className="w-full text-sm">
             <thead className="bg-gray-100 border-b border-gray-300">
@@ -317,7 +370,7 @@ export function DataTable() {
                             e.stopPropagation();
                             handleCopyColumn(col);
                           }}
-                          className="p-1 hover:bg-gray-300 rounded transition"
+                          className="p-1 hover:bg-gray-300 rounded transition cursor-pointer"
                           title="Copiar coluna"
                         >
                           <Copy size={16} />

@@ -2,10 +2,11 @@
 
 import React, { useRef, useState } from "react";
 import { Upload, AlertCircle } from "lucide-react";
-import { detectAndParseCSV, validateCSV, createTableData } from "@/lib/csvParser";
+import { validateCSV, createTableData } from "@/lib/csvParser";
 import { BANK_TEMPLATES } from "@/lib/bankTemplates";
 import { useDataStore } from "@/store/dataStore";
 import { ValidationError } from "@/types";
+import { useParseCSV } from "@/hooks/useCSVOperations";
 
 interface CSVUploaderProps {
   onUploadSuccess?: () => void;
@@ -13,56 +14,56 @@ interface CSVUploaderProps {
 
 export function CSVUploader({ onUploadSuccess }: CSVUploaderProps = {}) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const [bankOption, setBankOption] = useState<string | null>(null);
   const [monthOption, setMonthOption] = useState<string | null>(null);
-  const [currentFile, setCurrentFile] = useState<File | null>(null); // Guardar o arquivo
-  const { setTableData, setLoading, setError } = useDataStore();
+  const [currentFile, setCurrentFile] = useState<File | null>(null);
+  const { setTableData, setError } = useDataStore();
 
-  const handleFileSelect = async (file: File | null) => {
+  // TanStack Query Mutation para parse do CSV via API
+  const { mutate: parseCSV, isPending: isLoading } = useParseCSV();
+
+  const handleFileSelect = (file: File | null) => {
     if (!file) return;
 
-    setCurrentFile(file); // Guardar o arquivo para uso posterior
-    setIsLoading(true);
+    setCurrentFile(file);
     setValidationErrors([]);
     setError(null);
 
-    try {
-      // Detectar e fazer parsing
-      const { rows, columns, bank, month } = await detectAndParseCSV(file);
+    // Chamar a mutation do TanStack Query
+    parseCSV(
+      { file, forcedBank: undefined },
+      {
+        onSuccess: (data) => {
+          const { rows, columns, bank, month } = data;
 
-      // Validar
-      const errors = validateCSV(rows, columns, bank);
+          // Validar dados
+          const errors = validateCSV(rows, columns, bank);
 
-      if (errors.length > 0) {
-        // Se houver erros de detecção, perguntar ao usuário
-        if (errors.some((e) => e.type === "missing-columns")) {
-          setValidationErrors(errors);
-          setBankOption(null);
-          setMonthOption(month);
-          return;
-        }
-        setValidationErrors(errors);
-        return;
-      }
+          if (errors.length > 0) {
+            if (errors.some((e) => e.type === "missing-columns")) {
+              setValidationErrors(errors);
+              setBankOption(null);
+              setMonthOption(month);
+              return;
+            }
+            setValidationErrors(errors);
+            return;
+          }
 
-      // Se detectou duplicatas, avisar depois
-      if (rows.length > 0) {
-        const tableData = createTableData(rows, columns, bank, month);
-        setTableData(tableData);
-        onUploadSuccess?.();
+          // Sucesso!
+          if (rows.length > 0) {
+            const tableData = createTableData(rows, columns, bank, month);
+            setTableData(tableData);
+            onUploadSuccess?.();
+          }
+        },
+        onError: (error: Error) => {
+          setError(error.message);
+          console.error("Erro ao fazer upload:", error);
+        },
       }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Erro desconhecido ao processar arquivo";
-      setError(message);
-      console.error("Erro:", err);
-    } finally {
-      setIsLoading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    }
+    );
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -85,27 +86,30 @@ export function CSVUploader({ onUploadSuccess }: CSVUploaderProps = {}) {
     }
   };
 
-  const handleBankConfirm = async () => {
+  const handleBankConfirm = () => {
     if (!bankOption || !currentFile) return;
 
-    setIsLoading(true);
     setValidationErrors([]);
 
-    try {
-      // Passar o banco forçado para usar o delimitador correto
-      const { rows, columns, month } = await detectAndParseCSV(currentFile, bankOption);
-      const tableData = createTableData(rows, columns, bankOption, month);
-      setTableData(tableData);
-      onUploadSuccess?.();
-      setCurrentFile(null);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Erro desconhecido";
-      setError(message);
-    } finally {
-      setIsLoading(false);
-      setBankOption(null);
-      setMonthOption(null);
-    }
+    // Chamar mutation com banco forçado
+    parseCSV(
+      { file: currentFile, forcedBank: bankOption },
+      {
+        onSuccess: (data) => {
+          const { rows, columns, month } = data;
+          const tableData = createTableData(rows, columns, bankOption, month);
+          setTableData(tableData);
+          onUploadSuccess?.();
+          setCurrentFile(null);
+        },
+        onError: (error: Error) => {
+          setError(error.message);
+        },
+      }
+    );
+
+    setBankOption(null);
+    setMonthOption(null);
   };
 
   return (
@@ -157,7 +161,7 @@ export function CSVUploader({ onUploadSuccess }: CSVUploaderProps = {}) {
             <button
               onClick={handleBankConfirm}
               disabled={!bankOption || isLoading}
-              className="px-4 py-2 bg-yellow-600 text-white rounded text-sm font-medium hover:bg-yellow-700 disabled:bg-gray-300"
+              className="px-4 py-2 bg-yellow-600 text-white rounded text-sm font-medium hover:bg-yellow-700 disabled:bg-gray-300 cursor-pointer"
             >
               Confirmar
             </button>

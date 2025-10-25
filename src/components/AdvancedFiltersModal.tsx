@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from "react";
 import { Modal } from "./Modal";
-import { X, ChevronDown, ChevronUp } from "lucide-react";
+import { X } from "lucide-react";
 import { ParsedRow } from "@/types";
 
 interface ColumnFilter {
@@ -23,7 +23,7 @@ interface AdvancedFiltersModalProps {
   onClearFilters: () => void;
 }
 
-// Helper: Extrair valores únicos de uma coluna (simples e sem memory leak)
+// Helper: Extrair valores únicos de uma coluna
 function getColumnValues(
   tableData: { rows: (ParsedRow & { isDuplicate?: boolean })[]; columns: string[] } | null,
   column: string
@@ -47,48 +47,60 @@ function getColumnValues(
 }
 
 export function AdvancedFiltersModal({ isOpen, onClose, tableData, advancedFilters, onAddFilter, onRemoveFilter, onClearFilters }: AdvancedFiltersModalProps) {
-  // Estado MUITO SIMPLES - sem Set, sem objetos complexos
-  const [localInputValues, setLocalInputValues] = useState<Record<string, string | string[]>>({});
-  const [expandedColumnNames, setExpandedColumnNames] = useState<string[]>([]); // Array simples, não Set!
+  // Estado para rastrear qual coluna está com dropdown aberto
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
-  // Callbacks SIMPLES - ANTES de qualquer conditional return!
-  const handleLocalChange = useCallback((col: string, value: string | string[]) => {
-    setLocalInputValues((prev) => ({ ...prev, [col]: value }));
-  }, []);
+  // Verificar se um valor já está filtrado
+  const isValueFiltered = useCallback(
+    (column: string, value: string): boolean => {
+      return advancedFilters.some((f) => f.column === column && (f.value === value || f.values?.includes(value)));
+    },
+    [advancedFilters]
+  );
 
-  const toggleColumn = useCallback((col: string) => {
-    setExpandedColumnNames((prev) => {
-      if (prev.includes(col)) {
-        return prev.filter((c) => c !== col); // Remove
+  // Alternar filtro (adiciona se não existe, remove se existe)
+  const toggleFilter = useCallback(
+    (column: string, value: string) => {
+      if (isValueFiltered(column, value)) {
+        // Remover filtro
+        const filterToRemove = advancedFilters.find((f) => f.column === column && (f.value === value || f.values?.includes(value)));
+        if (filterToRemove) {
+          onRemoveFilter(filterToRemove.id);
+        }
       } else {
-        return [...prev, col]; // Adiciona
+        // Adicionar filtro
+        onAddFilter(column, "select", value);
       }
-    });
-  }, []);
+    },
+    [advancedFilters, onAddFilter, onRemoveFilter, isValueFiltered]
+  );
 
-  // Se modal não está aberto ou sem dados, retorna null APÓS os hooks
+  // Se modal não está aberto ou sem dados, retorna null
   if (!isOpen || !tableData) return null;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Filtros Avançados" size="lg">
       <div className="space-y-4">
-        {/* Filtros Ativos - Somente aqui! */}
+        {/* Filtros Ativos como Tags */}
         {advancedFilters.length > 0 && (
           <div className="p-3 bg-purple-50 rounded border border-purple-200">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-purple-900">Filtros Ativos ({advancedFilters.length})</h3>
-              <button onClick={onClearFilters} className="text-xs px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+              <button
+                onClick={onClearFilters}
+                className="text-xs px-3 py-1.5 bg-red-500 text-white rounded hover:bg-red-600 transition cursor-pointer font-medium"
+              >
                 Limpar todos
               </button>
             </div>
             <div className="flex flex-wrap gap-2">
               {advancedFilters.map((filter) => (
-                <div key={filter.id} className="flex items-center gap-2 px-3 py-1 bg-purple-200 text-purple-900 rounded text-sm font-medium">
+                <div key={filter.id} className="flex items-center gap-2 px-3 py-1.5 bg-purple-600 text-white rounded-full text-sm font-medium shadow-sm">
                   <span>
                     {filter.column}: {filter.values?.join(", ") || filter.value}
                   </span>
-                  <button onClick={() => onRemoveFilter(filter.id)} className="p-0.5 hover:bg-purple-300 rounded">
-                    <X size={14} />
+                  <button onClick={() => onRemoveFilter(filter.id)} className="p-0.5 hover:bg-purple-700 rounded-full transition cursor-pointer ml-1">
+                    <X size={16} />
                   </button>
                 </div>
               ))}
@@ -96,81 +108,63 @@ export function AdvancedFiltersModal({ isOpen, onClose, tableData, advancedFilte
           </div>
         )}
 
-        {/* Lista de Filtros */}
-        <div className="space-y-2 max-h-96 overflow-y-auto">
-          <h3 className="font-semibold text-gray-900 sticky top-0 bg-white py-2">Adicionar Filtro por Coluna</h3>
+        {/* Multi-Select Dropdowns por Coluna */}
+        <div className="space-y-3 max-h-96 overflow-y-auto">
+          <h3 className="font-semibold text-gray-900 sticky top-0 bg-white py-2">Filtrar por Coluna</h3>
 
           {tableData.columns.map((col) => {
-            const isExpanded = expandedColumnNames.includes(col);
+            const { values } = getColumnValues(tableData, col);
             const filtersForColumn = advancedFilters.filter((f) => f.column === col);
-            const currentValue = localInputValues[col] || [];
-            const { values, isNumeric } = getColumnValues(tableData, col);
 
             return (
-              <div key={col} className="border border-gray-300 rounded bg-gray-50">
-                {/* Header do filtro com toggle */}
-                <button onClick={() => toggleColumn(col)} className="w-full flex items-center justify-between p-3 hover:bg-gray-100 transition">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-sm text-gray-900">{col}</span>
-                    {filtersForColumn.length > 0 && (
-                      <span className="inline-block px-2 py-0.5 bg-purple-600 text-white text-xs rounded">{filtersForColumn.length}</span>
-                    )}
-                  </div>
-                  {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                </button>
+              <div key={col} className="space-y-2">
+                <label className="block text-sm font-medium text-gray-900">{col}</label>
+                <div className="relative">
+                  <button
+                    onClick={() => setOpenDropdown(openDropdown === col ? null : col)}
+                    className="w-full px-3 py-2 text-left bg-white border border-gray-300 rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition flex items-center justify-between"
+                  >
+                    <span className="text-gray-700">{filtersForColumn.length > 0 ? `${filtersForColumn.length} selecionado(s)` : "Selecione valores"}</span>
+                    <span className="text-gray-400">▼</span>
+                  </button>
 
-                {/* Conteúdo expandido */}
-                {isExpanded && (
-                  <div className="px-3 pb-3 border-t border-gray-300 space-y-2">
-                    <label className="block font-medium text-sm text-gray-900 mb-2">Adicionar novo filtro para {col}</label>
+                  {/* Dropdown aberto */}
+                  {openDropdown === col && values.length > 0 && (
+                    <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-56 overflow-y-auto">
+                      {values.map((value) => {
+                        const isSelected = isValueFiltered(col, value);
+                        return (
+                          <label
+                            key={value}
+                            className="flex items-center gap-3 px-4 py-2.5 hover:bg-blue-50 cursor-pointer transition border-b border-gray-100 last:border-b-0"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => toggleFilter(col, value)}
+                              className="w-4 h-4 rounded cursor-pointer accent-blue-600"
+                            />
+                            <span className="text-sm text-gray-700">{value}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  )}
 
-                    {isNumeric ? (
-                      <div className="flex gap-2">
-                        <input
-                          type="number"
-                          placeholder="Digite o valor"
-                          value={typeof currentValue === "string" ? currentValue : ""}
-                          onChange={(e) => handleLocalChange(col, e.target.value)}
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm text-gray-900 placeholder-gray-600"
-                        />
-                        <button
-                          onClick={() => {
-                            const val = localInputValues[col];
-                            if (val) {
-                              onAddFilter(col, "number", val);
-                              handleLocalChange(col, "");
-                            }
-                          }}
-                          className="px-3 py-2 bg-blue-500 text-white rounded text-sm font-medium hover:bg-blue-600"
-                        >
-                          Adicionar
+                  {values.length === 0 && <div className="text-xs text-gray-500 mt-1">Nenhum valor disponível</div>}
+                </div>
+
+                {/* Tags de filtros ativos para esta coluna */}
+                {filtersForColumn.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {filtersForColumn.map((filter) => (
+                      <div key={filter.id} className="flex items-center gap-2 px-2.5 py-1 bg-blue-100 text-blue-900 rounded-full text-xs font-medium">
+                        <span>{filter.values?.join(", ") || filter.value}</span>
+                        <button onClick={() => onRemoveFilter(filter.id)} className="p-0.5 hover:bg-blue-200 rounded-full transition cursor-pointer">
+                          <X size={14} />
                         </button>
                       </div>
-                    ) : (
-                      <div className="space-y-2">
-                        <select
-                          multiple
-                          size={Math.min(6, values.length + 1)}
-                          value={Array.isArray(currentValue) ? currentValue : []}
-                          onChange={(e) => {
-                            const selected = Array.from(e.target.selectedOptions, (option) => option.value);
-                            handleLocalChange(col, selected);
-                            if (selected.length > 0) {
-                              onAddFilter(col, "select", selected[selected.length - 1]);
-                              handleLocalChange(col, []);
-                            }
-                          }}
-                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm text-gray-900 bg-white"
-                        >
-                          {values.map((value) => (
-                            <option key={value} value={value}>
-                              {value}
-                            </option>
-                          ))}
-                        </select>
-                        <p className="text-xs text-gray-700">Clique nos valores para adicionar como filtro</p>
-                      </div>
-                    )}
+                    ))}
                   </div>
                 )}
               </div>
