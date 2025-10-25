@@ -34,8 +34,31 @@ export function ValueDistributionChart({ data, advancedFilters }: ValueDistribut
       const sample = data.slice(0, 10).map((row) => {
         const val = row[column];
         if (val === null || val === undefined) return null;
-        const parsed = parseFloat(String(val).replace(/[^\d.-]/g, ""));
-        return isNaN(parsed) ? null : parsed;
+
+        const strValue = String(val);
+
+        // Detecta se é negativo (pode ter - em qualquer lugar)
+        const isNegative = strValue.includes("-");
+
+        // Remove símbolos monetários e espaços
+        let cleaned = strValue.replace(/[R$€£¥\s]/g, "");
+
+        // Remove o sinal negativo (será replicado depois)
+        cleaned = cleaned.replace("-", "");
+
+        // Formato brasileiro: remove pontos (milhares) e converte vírgula em ponto
+        cleaned = cleaned
+          .replace(/\./g, "") // Remove pontos (separadores de milhar)
+          .replace(/,/g, "."); // Converte vírgula em ponto (separador decimal)
+
+        let num = Number(cleaned) || 0;
+
+        // Reaplica o sinal negativo se existia
+        if (isNegative && num > 0) {
+          num = -num;
+        }
+
+        return isNaN(num) ? null : num;
       });
 
       if (sample.some((v) => v !== null)) {
@@ -65,11 +88,33 @@ export function ValueDistributionChart({ data, advancedFilters }: ValueDistribut
         const val = row[targetColumn];
         if (val === null || val === undefined) return;
 
-        const parsed = parseFloat(String(val).replace(/[^\d.-]/g, ""));
-        if (!isNaN(parsed)) {
-          if (parsed > 0) positives += parsed;
-          else if (parsed < 0) negatives += Math.abs(parsed);
-          else zero += parsed;
+        const strValue = String(val);
+
+        // Detecta se é negativo (pode ter - em qualquer lugar)
+        const isNegative = strValue.includes("-");
+
+        // Remove símbolos monetários e espaços
+        let cleaned = strValue.replace(/[R$€£¥\s]/g, "");
+
+        // Remove o sinal negativo (será replicado depois)
+        cleaned = cleaned.replace("-", "");
+
+        // Formato brasileiro: remove pontos (milhares) e converte vírgula em ponto
+        cleaned = cleaned
+          .replace(/\./g, "") // Remove pontos (separadores de milhar)
+          .replace(/,/g, "."); // Converte vírgula em ponto (separador decimal)
+
+        let num = Number(cleaned) || 0;
+
+        // Reaplica o sinal negativo se existia
+        if (isNegative && num > 0) {
+          num = -num;
+        }
+
+        if (!isNaN(num)) {
+          if (num > 0) positives += num;
+          else if (num < 0) negatives += Math.abs(num);
+          else zero += num;
         }
       });
 

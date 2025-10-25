@@ -1,17 +1,10 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import { Modal } from "./Modal";
+import { Modal } from "../modal";
 import { X } from "lucide-react";
 import { ParsedRow } from "@/types";
-
-interface ColumnFilter {
-  id: string;
-  column: string;
-  type: "text" | "number" | "select";
-  values?: string[];
-  value?: string | number;
-}
+import type { ColumnFilter } from "./types";
 
 interface AdvancedFiltersModalProps {
   isOpen: boolean;

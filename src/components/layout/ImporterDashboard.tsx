@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { RotateCcw, Save, Plus, Upload } from "lucide-react";
-import { CSVUploader } from "./CSVUploader";
+import { CSVUploader } from "../upload";
 import { ErrorAlert } from "./ErrorAlert";
-import { Modal } from "./Modal";
+import { Modal } from "../modal";
 import { useDataStore } from "@/store/dataStore";
-import { DataTable } from ".";
+import { DataTable } from "./DataTable";
 
 export function ImporterDashboard() {
   const { tableData, error, setError, reset, saveToLocalStorage, loadFromLocalStorage } = useDataStore();

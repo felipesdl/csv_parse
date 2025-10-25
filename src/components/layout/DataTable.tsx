@@ -1,22 +1,19 @@
 "use client";
 
 import React, { useMemo, useState, useCallback } from "react";
-import { ChevronDown, ChevronUp, Eye, EyeOff, Trash2, Copy, Download, AlertCircle, Filter } from "lucide-react";
+import { AlertCircle, ChevronUp, ChevronDown, Trash2, Copy, Download, Filter, Eye, EyeOff } from "lucide-react";
 import { ParsedRow } from "@/types";
 import { useDataStore } from "@/store/dataStore";
-import { exportToCSV, copyToClipboardWithoutHeaders, copyColumnToClipboard, getVisibleColumns } from "@/lib/exportUtils";
+import { exportToCSV, copyColumnToClipboard, getVisibleColumns } from "@/lib/exportUtils";
 import { formatValue } from "@/utils/formatUtils";
-import { AdvancedFiltersModal } from "./AdvancedFiltersModal";
-import { FormattingPanel } from "./FormattingPanel";
-import { ValueDistributionChart } from "./ValueDistributionChart";
+import { AdvancedFiltersModal } from "../filters";
+import { FormattingPanel } from "../formatting";
+import { ValueDistributionChart } from "../chart";
 import { useCopyToClipboard } from "@/hooks/useCSVOperations";
+import { SortIndicator, ColumnVisibility, TableControls, FilterBadgeList, TableHeader, TableBody, type ColumnFilter } from "../table";
 
-interface ColumnFilter {
+interface ExtendedColumnFilter extends ColumnFilter {
   id: string;
-  column: string;
-  type: "text" | "number" | "select";
-  values?: string[];
-  value?: string | number;
 }
 
 export function DataTable() {
