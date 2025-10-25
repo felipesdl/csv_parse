@@ -1,0 +1,12 @@
+Data;Descrição;Valor;Tipo de transação;Referência;Lançamento futuro
+30/10/2025 23:59:59;Saldo do dia;R$           500,00;;;
+30/10/2025 23:59:59;Saldo do dia;R$           500,00;;;
+30/10/2025 15:45:00;Pagamento PIX EMPRESA A;R$       -1.000,00;DÉBITO;;
+29/10/2025 23:59:59;Saldo do dia;R$        1.500,00;;;
+29/10/2025 23:59:59;Saldo do dia;R$        1.500,00;;;
+29/10/2025 12:25:00;Crédito PIX CLIENTE B;R$         250,00;CRÉDITO;;
+28/10/2025 23:59:59;Saldo do dia;R$        1.250,00;;;
+28/10/2025 14:30:00;Compra MasterCard - SUPERMERCADO;R$           -85,50;DÉBITO;223564******9123;
+27/10/2025 23:59:59;Saldo do dia;R$        1.335,50;;;
+27/10/2025 10:15:00;Pagamento PIX EMPRESA A;R$       -1.000,00;DÉBITO;;
+27/10/2025 10:15:00;Tarifa PIX (ENVIO);R$            -2,00;DÉBITO;;
