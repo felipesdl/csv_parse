@@ -4,3 +4,4 @@
 
 export * from "./formatUtils";
 export * from "./constants";
+export * from "./logger";

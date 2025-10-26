@@ -21,7 +21,7 @@ interface ExtendedColumnFilter extends ColumnFilter {
 
 export function DataTable() {
   const { tableData, columnSettings, deleteRows, updateColumnVisibility, formatSettings } = useDataStore();
-  const { success, error } = useToast();
+  const { success, error, confirm } = useToast();
   const [filterValue, setFilterValue] = useState("");
   const [advancedFilters, setAdvancedFilters] = useState<ColumnFilter[]>([]);
   const [showFiltersModal, setShowFiltersModal] = useState(false);
@@ -159,16 +159,26 @@ export function DataTable() {
   }, [selectedMainRowIndices, filteredData, makeClipboardText, copyWithQuery, success, error]);
 
   const handleDeleteSelected = useCallback(() => {
-    if (selectedMainRowIndices.length > 0 && confirm(`Deletar ${selectedMainRowIndices.length} linha(s)?`)) {
-      const originalIndices = selectedMainRowIndices
-        .map((filteredIdx: number) => filteredDataWithMap[filteredIdx]?.originalIndex)
-        .filter((idx: number | undefined): idx is number => idx !== undefined)
-        .sort((a: number, b: number) => b - a);
-      deleteRows(originalIndices as number[]);
-      setRowSelection({});
+    if (selectedMainRowIndices.length > 0) {
+      confirm(
+        `Deletar ${selectedMainRowIndices.length} linha(s)?`,
+        () => {
+          const originalIndices = selectedMainRowIndices
+            .map((filteredIdx: number) => filteredDataWithMap[filteredIdx]?.originalIndex)
+            .filter((idx: number | undefined): idx is number => idx !== undefined)
+            .sort((a: number, b: number) => b - a);
+          deleteRows(originalIndices as number[]);
+          setRowSelection({});
+        },
+        {
+          confirmText: "Sim, deletar",
+          cancelText: "Cancelar",
+          description: "Esta ação não pode ser desfeita.",
+        }
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedMainRowIndices, filteredDataWithMap]);
+  }, [selectedMainRowIndices, filteredDataWithMap, confirm]);
 
   const addAdvancedFilter = useCallback((column: string, type: "text" | "number" | "select", value?: string | string[]) => {
     setAdvancedFilters((prev) => {

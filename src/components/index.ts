@@ -28,3 +28,6 @@ export { FormattingPanel } from "./formatting";
 
 // Comparison components
 export { ComparisonPage } from "./comparison";
+
+// Error handling
+export { ErrorBoundary } from "./ErrorBoundary";

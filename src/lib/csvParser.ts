@@ -3,6 +3,7 @@ import { ParsedRow, ValidationError, TableData } from "@/types";
 import { detectBankFromContent, getTemplateByBank, detectMonthFromData, detectDelimiter, BANK_TEMPLATES } from "./bankTemplates";
 import { HEADER_KEYWORDS, ERROR_MESSAGES } from "@/utils/constants";
 import { parseValueBR } from "@/utils/formatUtils";
+import { logger } from "@/utils/logger";
 
 /**
  * Remove linhas de metadados (linhas antes do cabeçalho real)
@@ -297,7 +298,7 @@ export function validateCSVForComparison(rows: ParsedRow[], columns: string[]): 
   // Verificar se tem coluna "Valor" ou similar para comparação
   const hasValueColumn = columns.some((col) => col.toLowerCase().includes("valor"));
   if (!hasValueColumn) {
-    console.warn("[validateCSVForComparison] Aviso: Nenhuma coluna 'Valor' encontrada. Colunas disponíveis:", columns);
+    logger.warn("[validateCSVForComparison] Aviso: Nenhuma coluna 'Valor' encontrada. Colunas disponíveis:", columns);
     // Não é erro, apenas aviso - permitir continuar
   }
 

@@ -1,5 +1,7 @@
 import { ParsedRow } from "@/types";
 import { FormatSettings, formatValue, isDateValue, isNumericValue } from "@/utils/formatUtils";
+import { logger } from "@/utils/logger";
+import { DEFAULT_FORMAT_SETTINGS } from "@/utils/constants";
 import Papa from "papaparse";
 
 export function exportToCSV(
@@ -10,11 +12,7 @@ export function exportToCSV(
   formatSettings?: FormatSettings
 ): void {
   // Se não tiver formatSettings, use os padrões
-  const settings = formatSettings || {
-    dateFormat: "full" as const,
-    showNegativeAsPositive: false,
-    splitByPosNeg: false,
-  };
+  const settings = formatSettings || DEFAULT_FORMAT_SETTINGS;
 
   // Aplicar formatação aos dados
   const formattedRows = rows.map((row) => {
@@ -48,11 +46,7 @@ export function exportToCSV(
 export async function copyToClipboard(rows: ParsedRow[], columns: string[], delimiter: string = "\t", formatSettings?: FormatSettings): Promise<boolean> {
   try {
     // Se não tiver formatSettings, use os padrões
-    const settings = formatSettings || {
-      dateFormat: "full" as const,
-      showNegativeAsPositive: false,
-      splitByPosNeg: false,
-    };
+    const settings = formatSettings || DEFAULT_FORMAT_SETTINGS;
 
     // Criar header
     const header = columns.join(delimiter);
@@ -78,7 +72,7 @@ export async function copyToClipboard(rows: ParsedRow[], columns: string[], deli
     await navigator.clipboard.writeText(fullText);
     return true;
   } catch (error) {
-    console.error("Erro ao copiar para clipboard:", error);
+    logger.error("Erro ao copiar para clipboard:", error);
     return false;
   }
 }
@@ -116,11 +110,7 @@ export async function copyToClipboardWithoutHeaders(
   formatSettings?: FormatSettings
 ): Promise<boolean> {
   try {
-    const settings = formatSettings || {
-      dateFormat: "full" as const,
-      showNegativeAsPositive: false,
-      splitByPosNeg: false,
-    };
+    const settings = formatSettings || DEFAULT_FORMAT_SETTINGS;
 
     // Criar linhas com formatação (SEM HEADER)
     const lines = rows.map((row) => {
@@ -141,7 +131,7 @@ export async function copyToClipboardWithoutHeaders(
     await navigator.clipboard.writeText(fullText);
     return true;
   } catch (error) {
-    console.error("Erro ao copiar para clipboard:", error);
+    logger.error("Erro ao copiar para clipboard:", error);
     return false;
   }
 }
@@ -149,11 +139,7 @@ export async function copyToClipboardWithoutHeaders(
 // Copiar uma coluna inteira
 export async function copyColumnToClipboard(rows: ParsedRow[], columnName: string, formatSettings?: FormatSettings): Promise<boolean> {
   try {
-    const settings = formatSettings || {
-      dateFormat: "full" as const,
-      showNegativeAsPositive: false,
-      splitByPosNeg: false,
-    };
+    const settings = formatSettings || DEFAULT_FORMAT_SETTINGS;
 
     // Extrair valores da coluna com formatação
     const values = rows.map((row) => {
@@ -165,7 +151,7 @@ export async function copyColumnToClipboard(rows: ParsedRow[], columnName: strin
     await navigator.clipboard.writeText(fullText);
     return true;
   } catch (error) {
-    console.error("Erro ao copiar coluna para clipboard:", error);
+    logger.error("Erro ao copiar coluna para clipboard:", error);
     return false;
   }
 }

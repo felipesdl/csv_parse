@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { detectAndParseCSV } from "@/lib/csvParser";
+import { logger } from "@/utils/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
       );
     } catch (parseError) {
       const parseMessage = parseError instanceof Error ? parseError.message : "Erro desconhecido ao processar CSV";
-      console.error("Erro ao parsear CSV:", parseError);
+      logger.error("Erro ao parsear CSV:", parseError);
 
       return NextResponse.json(
         {
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Erro ao processar requisição";
-    console.error("Erro na API /csv/parse:", error);
+    logger.error("Erro na API /csv/parse:", error);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

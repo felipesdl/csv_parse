@@ -6,17 +6,18 @@ import { BANK_TEMPLATES } from "@/lib/bankTemplates";
 import { Eye, EyeOff, Settings } from "lucide-react";
 import { formatBankReference } from "@/utils/referenceFormatter";
 import { formatValue as formatUtilValue, FormatSettings, extractNumericValue, parseValueBR } from "@/utils/formatUtils";
+import { DEFAULT_FORMAT_SETTINGS } from "@/utils/constants";
 
-const DEFAULT_FORMAT_SETTINGS: FormatSettings = {
+// Custom initial settings for ExtractTablesView (date-only by default)
+const INITIAL_FORMAT_SETTINGS: FormatSettings = {
+  ...DEFAULT_FORMAT_SETTINGS,
   dateFormat: "date-only",
-  showNegativeAsPositive: false,
-  splitByPosNeg: false,
 };
 
 export function ExtractTablesView() {
   const { comparedFiles } = useComparisonStore();
   const [searchValue, setSearchValue] = useState("");
-  const [formatSettings, setFormatSettings] = useState<FormatSettings>(DEFAULT_FORMAT_SETTINGS);
+  const [formatSettings, setFormatSettings] = useState<FormatSettings>(INITIAL_FORMAT_SETTINGS);
   const [visibleColumns, setVisibleColumns] = useState<Record<string, Record<string, boolean>>>({});
 
   if (!comparedFiles || comparedFiles.length === 0) {

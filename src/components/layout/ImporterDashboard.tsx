@@ -7,9 +7,11 @@ import { ErrorAlert } from "./ErrorAlert";
 import { Modal } from "../modal";
 import { useDataStore } from "@/store/dataStore";
 import { DataTable } from "./DataTable";
+import { useToast } from "@/hooks/useToast";
 
 export function ImporterDashboard() {
   const { tableData, error, setError, reset, saveToLocalStorage, loadFromLocalStorage } = useDataStore();
+  const { confirm } = useToast();
   const [mounted, setMounted] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
 
@@ -69,9 +71,17 @@ export function ImporterDashboard() {
 
               <button
                 onClick={() => {
-                  if (confirm("Deseja descartar todos os dados?")) {
-                    reset();
-                  }
+                  confirm(
+                    "Deseja descartar todos os dados?",
+                    () => {
+                      reset();
+                    },
+                    {
+                      confirmText: "Sim, limpar",
+                      cancelText: "Cancelar",
+                      description: "Todos os dados carregados serão perdidos.",
+                    }
+                  );
                 }}
                 className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium transition"
               >

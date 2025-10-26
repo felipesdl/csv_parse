@@ -1,4 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { logger } from "@/utils/logger";
+import { CACHE_TTL } from "@/utils/constants";
 
 interface ParseCSVResponse {
   success: boolean;
@@ -58,12 +60,12 @@ export function useParseCSV() {
           })
         );
       } catch (e) {
-        console.warn("Erro ao salvar em localStorage:", e);
+        logger.warn("Erro ao salvar em localStorage:", e);
       }
     },
 
     onError: (error: Error) => {
-      console.error("Erro no mutation CSV:", error);
+      logger.error("Erro no mutation CSV:", error);
     },
   });
 }
@@ -82,20 +84,20 @@ export function useLastCSVUpload() {
         const parsed = JSON.parse(stored);
         const age = Date.now() - parsed.timestamp;
 
-        // Se tem mais de 5 minutos, remover
-        if (age > 5 * 60 * 1000) {
+        // Se tem mais de CACHE_TTL, remover
+        if (age > CACHE_TTL) {
           localStorage.removeItem("csv-last-upload");
           return null;
         }
 
         return parsed.data;
       } catch (e) {
-        console.warn("Erro ao ler localStorage:", e);
+        logger.warn("Erro ao ler localStorage:", e);
         return null;
       }
     },
-    staleTime: 5 * 60 * 1000, // 5 minutos
-    gcTime: 10 * 60 * 1000, // 10 minutos
+    staleTime: CACHE_TTL, // 5 minutos
+    gcTime: CACHE_TTL * 2, // 10 minutos
   });
 }
 
@@ -109,7 +111,7 @@ export function useCopyToClipboard() {
       return true;
     },
     onError: (error: Error) => {
-      console.error("Erro ao copiar:", error);
+      logger.error("Erro ao copiar:", error);
     },
   });
 }

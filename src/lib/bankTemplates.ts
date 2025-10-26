@@ -1,4 +1,5 @@
 import { BankTemplate } from "@/types";
+import { logger } from "@/utils/logger";
 
 export const BANK_TEMPLATES: Record<string, BankTemplate> = {
   caixa: {
@@ -122,13 +123,13 @@ export function detectDelimiter(content: string): string {
   }
 
   if (!headerLine) {
-    console.warn("[detectDelimiter] Nenhum header encontrado, usando delimitador padrão ','");
+    logger.warn("[detectDelimiter] Nenhum header encontrado, usando delimitador padrão ','");
     return ","; // fallback
   }
 
   // Se a linha contiver "Data Lançamento", é muito provável que seja Banco Inter com ; como delimitador
   if (headerLine.toLowerCase().includes("data lançamento")) {
-    console.log("[detectDelimiter] Detectado 'Data Lançamento', usando delimitador ';' (Banco Inter)");
+    logger.log("[detectDelimiter] Detectado 'Data Lançamento', usando delimitador ';' (Banco Inter)");
     return ";";
   }
 
@@ -138,7 +139,7 @@ export function detectDelimiter(content: string): string {
 
   for (const delim of delimiters) {
     const columnCount = (headerLine.match(new RegExp(`\\${delim}`, "g")) || []).length + 1;
-    console.log(`[detectDelimiter] Delimitador "${delim}": ${columnCount} colunas em "${headerLine.substring(0, 60)}..."`);
+    logger.log(`[detectDelimiter] Delimitador "${delim}": ${columnCount} colunas em "${headerLine.substring(0, 60)}..."`);
 
     // Score basado em número de colunas (preferir 3+)
     if (columnCount >= 3) {
@@ -162,7 +163,7 @@ export function detectDelimiter(content: string): string {
     }
   }
 
-  console.log(`[detectDelimiter] Delimitador escolhido: "${bestDelimiter}" com score ${maxScore}`);
+  logger.log(`[detectDelimiter] Delimitador escolhido: "${bestDelimiter}" com score ${maxScore}`);
   return bestDelimiter;
 }
 

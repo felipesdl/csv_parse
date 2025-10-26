@@ -1,11 +1,6 @@
 import { create } from "zustand";
-import { TableData, ColumnSettings } from "@/types";
-
-interface FormatSettings {
-  dateFormat: "full" | "date-only" | "day-only"; // "15/09/2025 23:59", "15/09/2025", "15"
-  showNegativeAsPositive: boolean; // Se true, mostra -100 como 100
-  splitByPosNeg: boolean; // Se true, divide a tabela em positivos e negativos
-}
+import { TableData, ColumnSettings, FormatSettings } from "@/types";
+import { logger } from "@/utils/logger";
 
 interface DataStore {
   // State
@@ -168,7 +163,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
         return true;
       }
     } catch (error) {
-      console.error("Erro ao carregar dados do localStorage:", error);
+      logger.error("Erro ao carregar dados do localStorage:", error);
     }
     return false;
   },
