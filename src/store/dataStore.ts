@@ -4,6 +4,7 @@ import { TableData, ColumnSettings } from "@/types";
 interface FormatSettings {
   dateFormat: "full" | "date-only" | "day-only"; // "15/09/2025 23:59", "15/09/2025", "15"
   showNegativeAsPositive: boolean; // Se true, mostra -100 como 100
+  splitByPosNeg: boolean; // Se true, divide a tabela em positivos e negativos
 }
 
 interface DataStore {
@@ -44,6 +45,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
   formatSettings: {
     dateFormat: "full",
     showNegativeAsPositive: false,
+    splitByPosNeg: false,
   },
 
   setTableData: (data) => {
@@ -181,6 +183,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
       formatSettings: {
         dateFormat: "full",
         showNegativeAsPositive: false,
+        splitByPosNeg: false,
       },
     });
     localStorage.removeItem(STORAGE_KEY);

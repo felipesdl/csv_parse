@@ -5,5 +5,6 @@ export { FilterBadgeList } from "./FilterBadgeList";
 export { TableHeader } from "./TableHeader";
 export { TableRow } from "./TableRow";
 export { TableBody } from "./TableBody";
+export { SplitTableView } from "./SplitTableView";
 
 export type { ColumnFilter, TableContextType } from "./types";

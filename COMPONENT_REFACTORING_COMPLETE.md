@@ -29,7 +29,7 @@ src/components/
 │   ├── types.ts            # ColumnFilter interface
 │   └── index.ts            # Barrel export
 │
-├── table/                   # Data table components (7 extracted sub-components)
+├── table/                   # Data table components (9 extracted sub-components)
 │   ├── types.ts            # ColumnFilter, TableContextType
 │   ├── SortIndicator.tsx   # Sort chevron display (ChevronUp/Down)
 │   ├── ColumnVisibility.tsx # Column visibility toggles
@@ -38,6 +38,7 @@ src/components/
 │   ├── TableHeader.tsx     # Table header with sorting
 │   ├── TableRow.tsx        # Single row rendering
 │   ├── TableBody.tsx       # Tbody wrapper
+│   ├── SplitTableView.tsx  # Dividir dados em positivos/negativos
 │   └── index.ts            # Barrel export
 │
 ├── chart/                   # Chart components
@@ -57,6 +58,8 @@ src/components/
 │   ├── ImporterDashboard.tsx  # Main dashboard
 │   ├── DataTable.tsx          # Data table with filters
 │   ├── ErrorAlert.tsx         # Error display
+│   ├── SimpleTable.tsx       # Componente reutilizável para tabelas
+│   ├── DualTableWrapper.tsx  # Renderiza duas tabelas (pos/neg)
 │   └── index.ts              # Barrel export
 │
 └── index.ts                # Main barrel export (organized by category)
@@ -86,21 +89,24 @@ src/components/
 | TableHeader      | Table header with sort functionality          |
 | TableRow         | Single data row                               |
 | TableBody        | Table body wrapper                            |
+| SplitTableView   | Divide data into positive/negative            |
 
-### Layout Components (3 total)
+### Layout Components (5 total)
 
-| Component         | Purpose                      |
-| ----------------- | ---------------------------- |
-| ImporterDashboard | Main dashboard layout        |
-| DataTable         | Data table with all features |
-| ErrorAlert        | Error message display        |
+| Component         | Purpose                                   |
+| ----------------- | ----------------------------------------- |
+| ImporterDashboard | Main dashboard layout                     |
+| DataTable         | Data table with all features (refactored) |
+| ErrorAlert        | Error message display                     |
+| SimpleTable       | Reusable table component                  |
+| DualTableWrapper  | Renders two tables (positive/negative)    |
 
 ### Other Components
 
 - **AdvancedFiltersModal** - Advanced filtering interface
-- **ValueDistributionChart** - Data visualization (Recharts)
+- **ValueDistributionChart** - Data visualization (Recharts) - fixed for Brazilian format
 - **CSVUploader** - CSV file upload handler
-- **FormattingPanel** - Data formatting options
+- **FormattingPanel** - Data formatting options (now with split feature)
 - **Modal** - Base modal component
 
 ## Key Improvements
@@ -108,13 +114,16 @@ src/components/
 ### 1. Single Responsibility Principle
 
 - **Before**: 432-line DataTable component handling filtering, sorting, export, selection, rendering
-- **After**: DataTable orchestrates 7 focused sub-components, each with single responsibility
+- **After**: DataTable orchestrates components via SimpleTable and DualTableWrapper; SplitTableView handles value separation logic
 
 ### 2. Reusability
 
 - Created 6 generic UI components with variants/options
 - Shared types across domains (ColumnFilter, ModalProps, etc)
 - Components follow composition pattern
+- New `SimpleTable` component for rendering tables in any mode
+- New `SplitTableView` for value classification logic (reusable for future features)
+- New `DualTableWrapper` for displaying paired data
 
 ### 3. Maintainability
 

@@ -98,6 +98,20 @@ export function FormattingPanel() {
           <p className="text-xs text-gray-700 mt-2">
             {formatSettings.showNegativeAsPositive ? "Exemplo: -100 será exibido como 100" : "Exemplo: -100 será exibido como -100"}
           </p>
+
+          {/* Split by Positive/Negative */}
+          <label className="flex items-center gap-3 cursor-pointer p-2 hover:bg-gray-100 rounded mt-3">
+            <input
+              type="checkbox"
+              checked={formatSettings.splitByPosNeg}
+              onChange={(e) => setFormatSettings({ splitByPosNeg: e.target.checked })}
+              className="w-4 h-4"
+            />
+            <span className="text-sm text-gray-700">Dividir tabela em positivos e negativos</span>
+          </label>
+          <p className="text-xs text-gray-700 mt-2">
+            {formatSettings.splitByPosNeg ? "Tabela será exibida em duas seções" : "Tabela será exibida normalmente"}
+          </p>
         </div>
       </div>
     </div>

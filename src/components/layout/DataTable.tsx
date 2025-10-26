@@ -10,7 +10,8 @@ import { AdvancedFiltersModal } from "../filters";
 import { FormattingPanel } from "../formatting";
 import { ValueDistributionChart } from "../chart";
 import { useCopyToClipboard } from "@/hooks/useCSVOperations";
-import { SortIndicator, ColumnVisibility, TableControls, FilterBadgeList, TableHeader, TableBody, type ColumnFilter } from "../table";
+import { SortIndicator, ColumnVisibility, TableControls, FilterBadgeList, TableHeader, TableBody, SplitTableView, type ColumnFilter } from "../table";
+import { SimpleTable, DualTableWrapper } from "./";
 
 interface ExtendedColumnFilter extends ColumnFilter {
   id: string;
@@ -206,11 +207,6 @@ export function DataTable() {
     }
   };
 
-  const getSortIndicator = (columnName: string) => {
-    if (sortColumn !== columnName) return null;
-    return sortOrder === "asc" ? <ChevronUp size={16} /> : <ChevronDown size={16} />;
-  };
-
   return (
     <>
       <div className="space-y-4">
@@ -328,93 +324,43 @@ export function DataTable() {
         </div>
 
         {/* Tabela - 100% de largura abaixo */}
-        <div className="overflow-x-auto bg-white rounded-lg border border-gray-300">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-100 border-b border-gray-300">
-              <tr>
-                <th className="w-12 px-4 py-3">
-                  <input
-                    type="checkbox"
-                    checked={selectedRowIndices.length === filteredData.length && filteredData.length > 0}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        const sel: Record<string, boolean> = {};
-                        filteredData.forEach((_, i) => (sel[i] = true));
-                        setRowSelection(sel);
-                      } else {
-                        setRowSelection({});
-                      }
-                    }}
-                    className="cursor-pointer"
+        {formatSettings.splitByPosNeg ? (
+          <SplitTableView data={filteredData} columns={tableData.columns}>
+            {({ positiveData, negativeData }) => (
+              <DualTableWrapper
+                positiveData={positiveData}
+                negativeData={negativeData}
+                renderTable={(data, label) => (
+                  <SimpleTable
+                    data={data}
+                    columns={tableData.columns}
+                    columnSettings={columnSettings}
+                    formatSettings={formatSettings}
+                    selectedRows={rowSelection}
+                    onRowSelectionChange={setRowSelection}
+                    onColumnVisibilityChange={updateColumnVisibility}
+                    onCopyColumn={handleCopyColumn}
+                    onDeleteSelected={handleDeleteSelected}
+                    tableId={label}
                   />
-                </th>
-                {tableData.columns.map((col) => {
-                  const isVisible = columnSettings.find((s) => s.name === col)?.visible ?? true;
-                  if (!isVisible) return null;
-                  return (
-                    <th
-                      key={col}
-                      onClick={() => handleColumnSort(col)}
-                      className="px-4 py-3 font-semibold text-gray-900 bg-gray-100 cursor-pointer hover:bg-gray-200 border-r"
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          {col}
-                          {getSortIndicator(col)}
-                        </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCopyColumn(col);
-                          }}
-                          className="p-1 hover:bg-gray-300 rounded transition cursor-pointer"
-                          title="Copiar coluna"
-                        >
-                          <Copy size={16} />
-                        </button>
-                      </div>
-                    </th>
-                  );
-                })}
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.map((row, idx) => {
-                const isDuplicate = (row as any).isDuplicate;
-                return (
-                  <tr key={idx} className={`border-b hover:bg-gray-50 ${rowSelection[idx] ? "bg-blue-50" : isDuplicate ? "bg-red-50" : ""}`}>
-                    <td className="w-12 px-4 py-3">
-                      <input
-                        type="checkbox"
-                        checked={rowSelection[idx] || false}
-                        onChange={() => setRowSelection((p) => ({ ...p, [idx]: !p[idx] }))}
-                        className="cursor-pointer"
-                      />
-                    </td>
-                    {tableData.columns.map((col) => {
-                      const isVisible = columnSettings.find((s) => s.name === col)?.visible ?? true;
-                      if (!isVisible) return null;
-                      const cellValue = String(row[col] ?? "");
-                      const formattedValue = formatValue(cellValue, formatSettings);
-                      return (
-                        <td key={col} className="px-4 py-3 border-r text-gray-800">
-                          {isDuplicate && (
-                            <div className="flex gap-1 items-center mb-1">
-                              <AlertCircle size={14} className="text-red-600" />
-                              <span className="text-xs font-medium text-red-600">Duplicada</span>
-                            </div>
-                          )}
-                          {formattedValue}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          {filteredData.length === 0 && <div className="text-center py-8 text-gray-900">Nenhum dado para exibir</div>}
-        </div>
+                )}
+              />
+            )}
+          </SplitTableView>
+        ) : (
+          <SimpleTable
+            data={filteredData}
+            columns={tableData.columns}
+            columnSettings={columnSettings}
+            formatSettings={formatSettings}
+            selectedRows={rowSelection}
+            onRowSelectionChange={setRowSelection}
+            onColumnVisibilityChange={updateColumnVisibility}
+            onCopyColumn={handleCopyColumn}
+            onDeleteSelected={handleDeleteSelected}
+            tableId="main"
+          />
+        )}
       </div>
 
       <AdvancedFiltersModal
