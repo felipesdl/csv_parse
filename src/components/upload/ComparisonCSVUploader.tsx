@@ -75,6 +75,7 @@ export function ComparisonCSVUploader({ onUploadSuccess }: ComparisonCSVUploader
             id: crypto.randomUUID(),
             bankId,
             bankName: BANK_TEMPLATES[bankId]?.name || bankId,
+            month: month,
             uploadDate: new Date().toISOString(),
             rowCount: rows.length,
             data: rows,

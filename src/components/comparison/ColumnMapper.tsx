@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { ChevronDown, Check, Plus, Trash2, X } from "lucide-react";
 import { useComparisonStore, type ColumnMapping, type ComparedFile } from "@/store/comparisonStore";
+import { formatBankReference } from "@/utils/referenceFormatter";
 
 interface ColumnMapperProps {
   isOpen: boolean;
@@ -279,9 +280,7 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
 
                           return (
                             <div key={file.id} className="space-y-2">
-                              <label className="block text-sm font-medium text-gray-700">
-                                {file.bankName} ({file.bankId})
-                              </label>
+                              <label className="block text-sm font-medium text-gray-700">{formatBankReference(file.bankId, file.month || "")}</label>
                               <select
                                 value={fileMapping[file.id] || ""}
                                 onChange={(e) => handleColumnSelect(standardName, file.id, e.target.value)}
@@ -311,7 +310,7 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
                 <div className="mt-3 grid grid-cols-2 gap-4">
                   {comparedFiles.map((file) => (
                     <div key={file.id}>
-                      <p className="text-xs font-semibold text-blue-700 mb-2">{file.bankName}</p>
+                      <p className="text-xs font-semibold text-blue-700 mb-2">{formatBankReference(file.bankId, file.month || "")}</p>
                       <ul className="text-xs text-blue-600 space-y-1">
                         {file.columns.map((col) => (
                           <li key={col}>• {col}</li>

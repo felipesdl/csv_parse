@@ -5,6 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { useComparisonStore } from "@/store/comparisonStore";
 import { BANK_TEMPLATES } from "@/lib/bankTemplates";
 import { parseValueBR, COLORS_GENERIC, COLORS_CREDIT, COLORS_DEBIT } from "@/utils";
+import { formatBankReference } from "@/utils/referenceFormatter";
 
 interface ComparativeAnalysisProps {
   onOpenColumnMapper: () => void;
@@ -90,7 +91,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
         }
       }
 
-      const bankName = BANK_TEMPLATES[file.bankId]?.name || file.bankId;
+      const bankName = formatBankReference(file.bankId, file.month || "");
 
       bankStats.push({
         name: bankName,

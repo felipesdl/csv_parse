@@ -3,8 +3,10 @@
 import React, { useMemo, useState, useCallback } from "react";
 import { useComparisonStore } from "@/store/comparisonStore";
 import { BANK_TEMPLATES } from "@/lib/bankTemplates";
-import { Eye, EyeOff } from "lucide-react";
-import { FormattingPanel } from "@/components/formatting";
+import { Eye, EyeOff, Settings } from "lucide-react";
+import { formatBankReference } from "@/utils/referenceFormatter";
+import { formatValue as formatUtilValue, FormatSettings as UtilFormatSettings } from "@/utils/formatUtils";
+import { extractNumericValue } from "@/utils/formatUtils";
 
 // Função para limpar e parsear valores em formato brasileiro
 function parseValueBR(valor: string | number): number {
@@ -66,37 +68,29 @@ export function ExtractTablesView() {
     }));
   }, []);
 
-  // Função para formatar valor
+  // Função para formatar valor usando a função centralizada
   const formatValue = useCallback(
-    (valor: string | number): string => {
-      let strValue = String(valor);
+    (valor: string | number, columnName?: string): string => {
+      const strValue = String(valor).trim();
 
-      // Detectar se é data
-      if (/^\d{1,2}\/\d{1,2}\/\d{4}/.test(strValue.trim())) {
-        if (formatSettings.dateFormat === "day-only") {
-          return strValue.split("/")[0]; // Apenas dia
-        } else if (formatSettings.dateFormat === "date-only") {
-          return strValue.split(" ")[0]; // Data sem hora
-        }
-        return strValue; // Full format
+      // Se a coluna é Data, nunca formatar como monetário
+      if (columnName === "Data" || columnName === "Data Lançamento" || columnName === "Data de Lançamento") {
+        // Tratar como data
+        const utilSettings: UtilFormatSettings = {
+          dateFormat: formatSettings.dateFormat,
+          showNegativeAsPositive: false, // Datas nunca devem ser mostradas como positivas
+        };
+        return formatUtilValue(strValue, utilSettings);
       }
 
-      // Detectar se é valor monetário
-      if (strValue.includes("R$") || strValue.includes(",")) {
-        try {
-          const num = parseValueBR(strValue);
-          if (formatSettings.showNegativeAsPositive) {
-            return `R$ ${Math.abs(num).toLocaleString("pt-BR", {
-              minimumFractionDigits: 2,
-            })}`;
-          }
-          return `R$ ${num.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
-        } catch {
-          return strValue;
-        }
-      }
+      // Usar a função de formatação centralizada que suporta todos os formatos
+      const utilSettings: UtilFormatSettings = {
+        dateFormat: formatSettings.dateFormat,
+        showNegativeAsPositive: formatSettings.showNegativeAsPositive,
+      };
 
-      return strValue;
+      // Usa a função centralizada que já trata datas, números, etc
+      return formatUtilValue(strValue, utilSettings);
     },
     [formatSettings]
   );
@@ -105,8 +99,94 @@ export function ExtractTablesView() {
     <div className="space-y-4">
       {/* Controles */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 space-y-4">
-        {/* Formatação Panel */}
-        <FormattingPanel />
+        {/* Formatação Panel Local */}
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Settings className="w-4 h-4 text-gray-900" />
+            <h3 className="font-semibold text-gray-900">Formatação de Dados</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Date Format */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Formato de Data</label>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="dateFormat"
+                    value="full"
+                    checked={formatSettings.dateFormat === "full"}
+                    onChange={(e) =>
+                      setFormatSettings({
+                        ...formatSettings,
+                        dateFormat: e.target.value as "full" | "date-only" | "day-only",
+                      })
+                    }
+                    className="w-4 h-4"
+                  />
+                  <span className="text-sm text-gray-700">Data Completa (15/09/2025 23:59)</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="dateFormat"
+                    value="date-only"
+                    checked={formatSettings.dateFormat === "date-only"}
+                    onChange={(e) =>
+                      setFormatSettings({
+                        ...formatSettings,
+                        dateFormat: e.target.value as "full" | "date-only" | "day-only",
+                      })
+                    }
+                    className="w-4 h-4"
+                  />
+                  <span className="text-sm text-gray-700">Data + Hora (15/09/2025)</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="dateFormat"
+                    value="day-only"
+                    checked={formatSettings.dateFormat === "day-only"}
+                    onChange={(e) =>
+                      setFormatSettings({
+                        ...formatSettings,
+                        dateFormat: e.target.value as "full" | "date-only" | "day-only",
+                      })
+                    }
+                    className="w-4 h-4"
+                  />
+                  <span className="text-sm text-gray-700">Apenas o Dia (15)</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Negative Values */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Valores Negativos</label>
+              <label className="flex items-center gap-3 cursor-pointer p-2 hover:bg-gray-100 rounded">
+                <input
+                  type="checkbox"
+                  checked={formatSettings.showNegativeAsPositive}
+                  onChange={(e) =>
+                    setFormatSettings({
+                      ...formatSettings,
+                      showNegativeAsPositive: e.target.checked,
+                    })
+                  }
+                  className="w-4 h-4"
+                />
+                <span className="text-sm text-gray-700">Mostrar valores negativos como positivos</span>
+              </label>
+              <p className="text-xs text-gray-700 mt-2">
+                {formatSettings.showNegativeAsPositive ? "Exemplo: -100 será exibido como 100" : "Exemplo: -100 será exibido como -100"}
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* Search */}
         <div>
@@ -124,7 +204,7 @@ export function ExtractTablesView() {
       {/* Tabelas */}
       <div className={showSideBySide ? "grid grid-cols-1 lg:grid-cols-2 gap-6" : "space-y-8"}>
         {comparedFiles.map((file) => {
-          const bankName = BANK_TEMPLATES[file.bankId]?.name || file.bankId;
+          const bankName = formatBankReference(file.bankId, file.month || "");
           const template = BANK_TEMPLATES[file.bankId];
           const valueCol = template?.valueColumn;
 
@@ -277,7 +357,7 @@ export function ExtractTablesView() {
                           <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
                             {fileVisibleColumns.map((col) => {
                               let cellContent = row[col] || "-";
-                              cellContent = formatValue(cellContent);
+                              cellContent = formatValue(cellContent, col);
 
                               return (
                                 <td key={`${idx}-${col}`} className="px-4 py-3 text-gray-700 whitespace-nowrap">

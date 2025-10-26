@@ -13,6 +13,9 @@ export interface BankTemplate {
   typeColumn?: string;
   referenceColumn?: string;
   futureColumn?: string;
+  creditColumn?: string; // Para bancos com débito/crédito separados
+  debitColumn?: string; // Para bancos com débito/crédito separados
+  skipHeaderRows?: number; // Número de linhas de cabeçalho a pular
 }
 
 /**
@@ -80,6 +83,7 @@ export interface ComparedFile {
   id: string;
   bankId: string;
   bankName: string;
+  month?: string;
   uploadDate: string;
   rowCount: number;
   data: ParsedRow[];

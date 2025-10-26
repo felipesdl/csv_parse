@@ -7,19 +7,31 @@ export function FormattingPanel() {
   const { formatSettings, setFormatSettings, tableData } = useDataStore();
 
   // Check if there are date or numeric columns
+  // More robust check: looks for dates, numbers in Brazilian format, or just has data with a Valor column
   const hasDateOrNumericColumns = tableData?.rows.some((row) => {
     return Object.entries(row).some(([colName, value]) => {
       if (!value) return false;
       const strValue = String(value).trim();
-      // Check if it looks like a date
+
+      // Check if it looks like a date (DD/MM/YYYY or D/M/YYYY)
       if (/^\d{1,2}\/\d{1,2}\/\d{4}/.test(strValue)) return true;
-      // Check if it's a number (including negative)
+
+      // Check if it's a number (including negative, Brazilian format with comma)
       if (!isNaN(Number(strValue))) return true;
+
+      // Check for Brazilian currency format (1.250,00 or -245,50)
+      if (/^-?\d+(\.\d{3})*,\d{2}$/.test(strValue)) return true;
+
       return false;
     });
   });
 
-  if (!hasDateOrNumericColumns) return null;
+  // Show panel if there's data with dates/numbers, or if there are any rows (fallback)
+  if (!tableData?.rows || tableData.rows.length === 0) return null;
+
+  // Always show if there's a Valor column (standard for our format) or if we detected dates/numbers
+  const hasValorColumn = tableData?.columns?.includes("Valor");
+  if (!hasDateOrNumericColumns && !hasValorColumn) return null;
 
   return (
     <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">

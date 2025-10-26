@@ -43,11 +43,14 @@ export const BANK_TEMPLATES: Record<string, BankTemplate> = {
   santander: {
     id: "santander",
     name: "Santander",
-    delimiter: ",",
-    expectedColumns: ["Data", "Descrição", "Valor"],
+    delimiter: ";",
+    expectedColumns: ["Data", "Descrição", "Crédito (R$)", "Débito (R$)"],
     dateColumn: "Data",
     descriptionColumn: "Descrição",
-    valueColumn: "Valor",
+    valueColumn: "Valor", // Campo computado a partir de Crédito/Débito
+    creditColumn: "Crédito (R$)",
+    debitColumn: "Débito (R$)",
+    skipHeaderRows: 5, // Pular as 5 linhas de metadados (linhas 0-4), manter cabeçalho na linha 5
   },
   generic: {
     id: "generic",
@@ -77,7 +80,7 @@ export const AUTO_DETECT_KEYWORDS: Record<string, string[]> = {
   inter: ["inter", "banco inter", "bco inter", "data lançamento"],
   itau: ["itaú", "itau", "itau bank"],
   bradesco: ["bradesco", "banco bradesco"],
-  santander: ["santander", "banco santander"],
+  santander: ["santander", "banco santander", "crédito (r$)", "débito (r$)", "conta corrente", "agencia de marketing"],
   onilx: ["onilx", "onil x", "onil exchange"],
 };
 

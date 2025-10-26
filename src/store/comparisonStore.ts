@@ -5,6 +5,7 @@ export interface ComparedFile {
   id: string;
   bankId: string; // ID do banco (inter, caixa, itau, etc)
   bankName: string; // Nome exibido do banco
+  month?: string; // Mês do extrato (ex: "2025-09")
   uploadDate: string;
   rowCount: number;
   data: any[]; // Dados do CSV

@@ -8,6 +8,7 @@ import { ChevronUp, ChevronDown, Copy, Download, Eye, EyeOff, Settings } from "l
 import { exportToCSV, getVisibleColumns } from "@/lib/exportUtils";
 import { useCopyToClipboard } from "@/hooks/useCSVOperations";
 import { useToast } from "@/hooks/useToast";
+import { formatBankReference } from "@/utils/referenceFormatter";
 import type { ColumnFilter } from "../filters/types";
 
 export function CompleteDataView() {
@@ -76,7 +77,7 @@ export function CompleteDataView() {
 
     // Add unmapped columns from each file
     comparedFiles.forEach((file) => {
-      banks.push(file.bankName);
+      banks.push(formatBankReference(file.bankId, file.month || ""));
       const mappedCols = getMappedColumnsForFile(file.id);
 
       file.columns.forEach((col) => {
@@ -91,7 +92,7 @@ export function CompleteDataView() {
     const consolidatedRows: ParsedRow[] = [];
     comparedFiles.forEach((file) => {
       file.data.forEach((row) => {
-        const mappedRow: ParsedRow = { Banco: file.bankName };
+        const mappedRow: ParsedRow = { Banco: formatBankReference(file.bankId, file.month || "") };
 
         // Map each value to its mapped column name or original name
         file.columns.forEach((col) => {

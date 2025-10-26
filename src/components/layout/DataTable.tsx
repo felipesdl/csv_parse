@@ -6,6 +6,7 @@ import { ParsedRow } from "@/types";
 import { useDataStore } from "@/store/dataStore";
 import { exportToCSV, copyColumnToClipboard, getVisibleColumns } from "@/lib/exportUtils";
 import { formatValue } from "@/utils/formatUtils";
+import { formatBankReference } from "@/utils/referenceFormatter";
 import { AdvancedFiltersModal } from "../filters";
 import { FormattingPanel } from "../formatting";
 import { ValueDistributionChart } from "../chart";
@@ -113,10 +114,11 @@ export function DataTable() {
 
   // Handlers
   const handleExportCSV = useCallback(() => {
-    const filename = `dados_${tableData.bank}_${Date.now()}.csv`;
+    const bankRef = formatBankReference(tableData.bank, tableData.month).replace(/\s/g, "_");
+    const filename = `${bankRef}_${Date.now()}.csv`;
     const rowsToExport = selectedMainRowIndices.length > 0 ? selectedMainRowIndices.map((idx) => filteredData[idx]) : filteredData;
     exportToCSV(rowsToExport, visibleColumns, filename, ";", formatSettings);
-  }, [selectedMainRowIndices, filteredData, tableData.bank, visibleColumns, formatSettings]);
+  }, [selectedMainRowIndices, filteredData, tableData.bank, tableData.month, visibleColumns, formatSettings]);
 
   // TanStack Query mutation para clipboard
   const { mutate: copyWithQuery } = useCopyToClipboard();
@@ -226,12 +228,8 @@ export function DataTable() {
             <div className="bg-white p-4 rounded-lg border border-gray-300 space-y-4">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-700 font-medium">Banco</p>
-                  <p className="font-semibold text-lg text-gray-900">{tableData.bank}</p>
-                </div>
-                <div>
-                  <p className="text-gray-700 font-medium">Período</p>
-                  <p className="font-semibold text-lg text-gray-900">{tableData.month}</p>
+                  <p className="text-gray-700 font-medium">Referência</p>
+                  <p className="font-semibold text-lg text-gray-900">{formatBankReference(tableData.bank, tableData.month)}</p>
                 </div>
                 <div>
                   <p className="text-gray-700 font-medium">Total de linhas</p>

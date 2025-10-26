@@ -3,6 +3,7 @@
 import React, { useMemo } from "react";
 import { useComparisonStore } from "@/store/comparisonStore";
 import { BANK_TEMPLATES } from "@/lib/bankTemplates";
+import { formatBankReference } from "@/utils/referenceFormatter";
 
 // Função para limpar e parsear valores em formato brasileiro
 function parseValueBR(valor: string | number): number {
@@ -76,7 +77,7 @@ export function ConsolidationView() {
         }
       }
 
-      const bankName = BANK_TEMPLATES[file.bankId]?.name || file.bankId;
+      const bankName = formatBankReference(file.bankId, file.month || "");
       const saldoLiquido = fileCredito + fileDebito;
 
       stats.push({

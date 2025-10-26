@@ -13,8 +13,21 @@ export interface FormatSettings {
  */
 export function isDateValue(value: string): boolean {
   if (!value) return false;
+
+  const trimmed = value.trim();
+
   // Detecta formato dd/mm/yyyy ou dd/mm/yyyy hh:mm:ss
-  return /^\d{1,2}\/\d{1,2}\/\d{4}(\s\d{1,2}:\d{2}(:\d{2})?)?$/.test(value.trim());
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}(\s\d{1,2}:\d{2}(:\d{2})?)?$/.test(trimmed)) {
+    return true;
+  }
+
+  // Detecta formato português localizado: "Dia da semana, DD de Mês de YYYY" ou "DD de Mês de YYYY"
+  // Ex: "Terça, 23 de setembro de 2025" ou "16 de setembro de 2025"
+  if (/(?:[A-Za-z]+,?)?\s*\d{1,2}\s+de\s+[A-Za-z]+\s+de\s+\d{4}/i.test(trimmed)) {
+    return true;
+  }
+
+  return false;
 }
 
 /**
@@ -91,7 +104,7 @@ export function extractNumericValue(value: string): number {
 
 /**
  * Formata uma data de acordo com a preferência do usuário
- * @param dateStr String no formato "dd/mm/yyyy" ou "dd/mm/yyyy hh:mm:ss"
+ * @param dateStr String no formato "dd/mm/yyyy" ou "dd/mm/yyyy hh:mm:ss" ou "Dia, DD de Mês de YYYY"
  * @param format "full" | "date-only" | "day-only"
  */
 export function formatDate(dateStr: string, format: "full" | "date-only" | "day-only"): string {
@@ -99,6 +112,46 @@ export function formatDate(dateStr: string, format: "full" | "date-only" | "day-
 
   const trimmed = dateStr.trim();
 
+  // Mapa de meses em português (com suporte a variações)
+  const monthMap: Record<string, string> = {
+    janeiro: "01",
+    fevereiro: "02",
+    março: "03",
+    abril: "04",
+    maio: "05",
+    junho: "06",
+    julho: "07",
+    agosto: "08",
+    setembro: "09",
+    outubro: "10",
+    novembro: "11",
+    dezembro: "12",
+  };
+
+  // Detecta formato português localizado: "Dia, DD de Mês de YYYY" ou "DD de Mês de YYYY"
+  // Ex: "Quarta, 24 de setembro de 2025" ou "Terça, 23 de setembro de 2025" ou "16 de setembro de 2025"
+  // Regex mais flexível que aceita ou não o dia da semana
+  const localizedMatch = trimmed.match(/(?:[A-Za-z]+,?)?\s*(\d{1,2})\s+de\s+([A-Za-z]+)\s+de\s+(\d{4})/i);
+
+  if (localizedMatch) {
+    const day = localizedMatch[1].padStart(2, "0");
+    const monthName = localizedMatch[2].toLowerCase();
+    const year = localizedMatch[3];
+    const monthNum = monthMap[monthName] || "01";
+
+    if (format === "day-only") {
+      return day;
+    }
+
+    if (format === "date-only") {
+      return `${day}/${monthNum}/${year}`;
+    }
+
+    // format === "full" - retorna completo
+    return trimmed;
+  }
+
+  // Formato padrão dd/mm/yyyy ou dd/mm/yyyy hh:mm:ss
   if (format === "day-only") {
     // Extrai apenas o dia (dd)
     const match = trimmed.match(/^(\d{1,2})/);

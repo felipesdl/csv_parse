@@ -138,11 +138,75 @@ export async function detectAndParseCSV(file: File, forcedBank?: string): Promis
 
   let template = getTemplateByBank(forcedBank);
 
-  // Limpar linhas de metadados (linhas antes do cabeçalho real)
-  const cleanedContent = cleanMetadataLines(fileContent, template.delimiter);
+  // Usar skipHeaderRows do template se disponível (pula linhas de metadados ANTES do parse)
+  let contentToParse = fileContent;
+  if (template.skipHeaderRows && template.skipHeaderRows > 0) {
+    const lines = fileContent.split("\n");
+    contentToParse = lines.slice(template.skipHeaderRows).join("\n");
+  } else {
+    // Fallback para detecção automática se skipHeaderRows não definido
+    contentToParse = cleanMetadataLines(fileContent, template.delimiter);
+  }
 
   // Fazer parsing do conteúdo limpo
-  const { rows, columns } = await parseCSVFromString(cleanedContent, template.delimiter);
+  let { rows, columns } = await parseCSVFromString(contentToParse, template.delimiter);
+
+  // Remover linhas de TOTAL ou outras linhas inválidas que possam estar no final
+  rows = rows.filter((row) => {
+    // Ignorar linhas que parecem ser TOTAL
+    const descriptionValue = String(row[template.descriptionColumn] || "").toLowerCase();
+    if (descriptionValue.includes("total")) {
+      return false;
+    }
+    // Ignorar linhas completamente vazias
+    if (Object.values(row).every((v) => !v || String(v).trim() === "")) {
+      return false;
+    }
+    return true;
+  });
+
+  // Se o banco tem colunas de débito/crédito separadas, consolidar em uma coluna "Valor"
+  if (template.creditColumn && template.debitColumn) {
+    const newRows: ParsedRow[] = [];
+
+    for (const row of rows) {
+      const newRow: ParsedRow = { ...row };
+      const credit = row[template.creditColumn];
+      const debit = row[template.debitColumn];
+
+      // Converter para números (removendo R$, pontos de milhar, etc)
+      const parseValue = (val: unknown): number => {
+        if (!val) return 0;
+        const str = String(val)
+          .replace(/[R$\s.]/g, "")
+          .replace(",", ".");
+        const num = parseFloat(str);
+        return isNaN(num) ? 0 : num;
+      };
+
+      const creditNum = parseValue(credit);
+      const debitNum = parseValue(debit);
+
+      // Criar coluna "Valor": crédito é positivo, débito é negativo
+      const valor = creditNum > 0 ? creditNum : -debitNum;
+
+      // Adicionar coluna "Valor" consolidada
+      newRow["Valor"] = valor.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      // Remover colunas originais de débito/crédito
+      delete newRow[template.creditColumn];
+      delete newRow[template.debitColumn];
+
+      newRows.push(newRow);
+    }
+
+    // Atualizar rows e columns
+    rows = newRows;
+    columns = columns.filter((col) => col !== template.creditColumn && col !== template.debitColumn);
+    if (!columns.includes("Valor")) {
+      columns.push("Valor");
+    }
+  }
 
   // Detect month from first date found
   let month = "Desconhecido";
@@ -164,16 +228,51 @@ export function validateCSV(rows: ParsedRow[], columns: string[], bankTemplate: 
   const errors: ValidationError[] = [];
   const template = getTemplateByBank(bankTemplate);
 
-  // Verificar colunas esperadas
-  if (template.expectedColumns.length > 0) {
-    const missingColumns = template.expectedColumns.filter((col) => !columns.includes(col));
+  // Se o banco tem colunas de débito/crédito, não validar a coluna "Valor" esperada
+  // pois ela será criada durante o processamento
+  if (template.creditColumn && template.debitColumn) {
+    // Para Santander, verificar se tem as colunas de crédito/débito
+    const hasCredit = columns.includes(template.creditColumn);
+    const hasDebit = columns.includes(template.debitColumn);
+    const hasDate = columns.includes(template.dateColumn);
+    const hasDesc = columns.includes(template.descriptionColumn);
 
-    if (missingColumns.length > 0) {
+    if (!hasCredit) {
       errors.push({
         type: "missing-columns",
-        message: `Colunas esperadas não encontradas: ${missingColumns.join(", ")}`,
-        data: { missingColumns, foundColumns: columns },
+        message: `Coluna esperada não encontrada: ${template.creditColumn}`,
       });
+    }
+    if (!hasDebit) {
+      errors.push({
+        type: "missing-columns",
+        message: `Coluna esperada não encontrada: ${template.debitColumn}`,
+      });
+    }
+    if (!hasDate) {
+      errors.push({
+        type: "missing-columns",
+        message: `Coluna esperada não encontrada: ${template.dateColumn}`,
+      });
+    }
+    if (!hasDesc) {
+      errors.push({
+        type: "missing-columns",
+        message: `Coluna esperada não encontrada: ${template.descriptionColumn}`,
+      });
+    }
+  } else {
+    // Para outros bancos, validação padrão
+    if (template.expectedColumns.length > 0) {
+      const missingColumns = template.expectedColumns.filter((col) => !columns.includes(col));
+
+      if (missingColumns.length > 0) {
+        errors.push({
+          type: "missing-columns",
+          message: `Colunas esperadas não encontradas: ${missingColumns.join(", ")}`,
+          data: { missingColumns, foundColumns: columns },
+        });
+      }
     }
   }
 
