@@ -17,13 +17,12 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
   const [showAddColumn, setShowAddColumn] = useState(false);
   const [newColumnName, setNewColumnName] = useState("");
 
+  // Auto-detect and auto-save column mappings
   useEffect(() => {
-    setLocalMapping(columnMappings);
-  }, [columnMappings]);
-
-  // Auto-detect similar columns
-  useEffect(() => {
-    if (comparedFiles.length < 2) return;
+    if (comparedFiles.length < 2) {
+      setLocalMapping(columnMappings);
+      return;
+    }
 
     const autoMapping: ColumnMapping = {};
     const processedPairs = new Set<string>();
@@ -78,7 +77,9 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
     }
 
     setLocalMapping(autoMapping);
-  }, [comparedFiles]);
+    // Auto-save the mapping immediately - no need for manual confirmation
+    setColumnMapping(autoMapping);
+  }, [comparedFiles, setColumnMapping]);
 
   const handleColumnSelect = (standardName: string, fileId: string, actualColumn: string) => {
     // If we're adding a new mapping, check if this column is already mapped elsewhere
@@ -119,11 +120,6 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
     });
   };
 
-  const handleSave = () => {
-    setColumnMapping(localMapping);
-    onClose();
-  };
-
   const handleRemoveMapping = (standardName: string) => {
     setLocalMapping((prev) => {
       const newMapping = { ...prev };
@@ -137,6 +133,13 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
     });
   };
 
+  // Auto-save manual changes to mappings
+  useEffect(() => {
+    // Only save if localMapping is different from stored columnMappings
+    if (JSON.stringify(localMapping) !== JSON.stringify(columnMappings)) {
+      setColumnMapping(localMapping);
+    }
+  }, [localMapping, columnMappings, setColumnMapping]);
   const handleAddColumn = () => {
     if (!newColumnName.trim()) return;
 
@@ -228,44 +231,44 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
                 )}
 
                 {Object.entries(localMapping).map(([standardName, fileMapping]) => (
-                  <div key={standardName} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                    <button
-                      onClick={() => {
-                        setExpandedColumns((prev) => {
-                          const next = new Set(prev);
-                          if (next.has(standardName)) {
-                            next.delete(standardName);
-                          } else {
-                            next.add(standardName);
-                          }
-                          return next;
-                        });
-                      }}
-                      className="w-full flex items-center justify-between hover:bg-gray-100 p-2 rounded transition cursor-pointer"
-                    >
-                      <div className="text-left flex-1">
-                        <p className="font-medium text-gray-900">{standardName}</p>
-                        <p className="text-xs text-gray-600">
-                          Mapeado em {Object.keys(fileMapping).length} de {comparedFiles.length} arquivos
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveMapping(standardName);
-                          }}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded transition cursor-pointer"
-                          title="Remover este mapeamento"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                        <ChevronDown size={20} className={`transition ${expandedColumns.has(standardName) ? "rotate-180" : ""}`} />
-                      </div>
-                    </button>
+                  <div key={standardName} className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+                    <div className="flex items-center justify-between p-4 hover:bg-gray-100 transition">
+                      <button
+                        onClick={() => {
+                          setExpandedColumns((prev) => {
+                            const next = new Set(prev);
+                            if (next.has(standardName)) {
+                              next.delete(standardName);
+                            } else {
+                              next.add(standardName);
+                            }
+                            return next;
+                          });
+                        }}
+                        className="flex-1 text-left flex items-center gap-3 cursor-pointer"
+                      >
+                        <ChevronDown size={20} className={`transition flex-shrink-0 ${expandedColumns.has(standardName) ? "rotate-180" : ""}`} />
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900">{standardName}</p>
+                          <p className="text-xs text-gray-600">
+                            Mapeado em {Object.keys(fileMapping).length} de {comparedFiles.length} arquivos
+                          </p>
+                        </div>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveMapping(standardName);
+                        }}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded transition cursor-pointer flex-shrink-0 ml-2"
+                        title="Remover este mapeamento"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
 
                     {expandedColumns.has(standardName) && (
-                      <div className="mt-4 space-y-3 border-t pt-4">
+                      <div className="mt-0 space-y-3 border-t p-4">
                         {comparedFiles.map((file) => {
                           // Get columns already mapped in other groups for this file
                           const mappedInOthers = new Set<string>();
@@ -327,15 +330,9 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
         {/* Footer */}
         <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6 flex gap-3 justify-end">
           <button onClick={onClose} className="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium transition cursor-pointer">
-            Cancelar
+            Fechar
           </button>
-          <button
-            onClick={handleSave}
-            className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition cursor-pointer"
-          >
-            <Check size={18} />
-            Salvar Mapeamento
-          </button>
+          <div className="text-xs text-green-600 font-medium flex items-center gap-1">✓ Mapeamento aplicado automaticamente</div>
         </div>
       </div>
     </div>

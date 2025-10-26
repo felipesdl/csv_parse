@@ -13,6 +13,7 @@ export function exportToCSV(
   const settings = formatSettings || {
     dateFormat: "full" as const,
     showNegativeAsPositive: false,
+    splitByPosNeg: false,
   };
 
   // Aplicar formatação aos dados
@@ -50,6 +51,7 @@ export async function copyToClipboard(rows: ParsedRow[], columns: string[], deli
     const settings = formatSettings || {
       dateFormat: "full" as const,
       showNegativeAsPositive: false,
+      splitByPosNeg: false,
     };
 
     // Criar header
@@ -117,6 +119,7 @@ export async function copyToClipboardWithoutHeaders(
     const settings = formatSettings || {
       dateFormat: "full" as const,
       showNegativeAsPositive: false,
+      splitByPosNeg: false,
     };
 
     // Criar linhas com formatação (SEM HEADER)
@@ -149,6 +152,7 @@ export async function copyColumnToClipboard(rows: ParsedRow[], columnName: strin
     const settings = formatSettings || {
       dateFormat: "full" as const,
       showNegativeAsPositive: false,
+      splitByPosNeg: false,
     };
 
     // Extrair valores da coluna com formatação

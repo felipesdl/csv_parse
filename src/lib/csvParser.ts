@@ -2,6 +2,7 @@ import Papa from "papaparse";
 import { ParsedRow, ValidationError, TableData } from "@/types";
 import { detectBankFromContent, getTemplateByBank, detectMonthFromData, detectDelimiter, BANK_TEMPLATES } from "./bankTemplates";
 import { HEADER_KEYWORDS, ERROR_MESSAGES } from "@/utils/constants";
+import { parseValueBR } from "@/utils/formatUtils";
 
 /**
  * Remove linhas de metadados (linhas antes do cabeçalho real)
@@ -174,18 +175,8 @@ export async function detectAndParseCSV(file: File, forcedBank?: string): Promis
       const credit = row[template.creditColumn];
       const debit = row[template.debitColumn];
 
-      // Converter para números (removendo R$, pontos de milhar, etc)
-      const parseValue = (val: unknown): number => {
-        if (!val) return 0;
-        const str = String(val)
-          .replace(/[R$\s.]/g, "")
-          .replace(",", ".");
-        const num = parseFloat(str);
-        return isNaN(num) ? 0 : num;
-      };
-
-      const creditNum = parseValue(credit);
-      const debitNum = parseValue(debit);
+      const creditNum = parseValueBR(String(credit ?? ""));
+      const debitNum = parseValueBR(String(debit ?? ""));
 
       // Criar coluna "Valor": crédito é positivo, débito é negativo
       const valor = creditNum > 0 ? creditNum : -debitNum;
@@ -337,33 +328,6 @@ export function detectDuplicates(rows: ParsedRow[]): { [key: number]: number[] }
   }
 
   return duplicates;
-}
-
-export function cleanValue(value: unknown): string | number | null {
-  if (value === null || value === undefined) return null;
-
-  const str = String(value).trim();
-
-  if (str === "" || str === "N/A" || str === "-") return null;
-
-  // Tentar converter para número se for valor (com R$ ou similar)
-  if (typeof value === "string" && (value.includes("R$") || /^-?\d+([.,]\d{2})?$/.test(str))) {
-    const cleaned = str.replace(/[R$\s.]/g, "").replace(",", ".");
-    const num = parseFloat(cleaned);
-    return isNaN(num) ? str : num;
-  }
-
-  return str;
-}
-
-export function cleanRows(rows: ParsedRow[]): ParsedRow[] {
-  return rows.map((row) => {
-    const cleanedRow: ParsedRow = {};
-    for (const [key, value] of Object.entries(row)) {
-      cleanedRow[key] = cleanValue(value);
-    }
-    return cleanedRow;
-  });
 }
 
 export function createTableData(rows: ParsedRow[], columns: string[], bank: string, month: string): TableData {

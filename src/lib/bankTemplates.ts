@@ -167,15 +167,83 @@ export function detectDelimiter(content: string): string {
 }
 
 export function detectMonthFromData(dateString: string): string | null {
-  // Esperado formato: DD/MM/YYYY ou DD/MM/YYYY HH:MM:SS
-  const dateRegex = /\d{2}\/(\d{2})\/(\d{4})/;
-  const match = dateString.match(dateRegex);
+  if (!dateString || typeof dateString !== "string") {
+    return null;
+  }
 
+  const trimmed = dateString.trim();
+  const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+  const portugueseMonthNames = {
+    janeiro: 1,
+    fevereiro: 2,
+    março: 3,
+    abril: 4,
+    maio: 5,
+    junho: 6,
+    julho: 7,
+    agosto: 8,
+    setembro: 9,
+    outubro: 10,
+    novembro: 11,
+    dezembro: 12,
+  };
+
+  // Formato 1: DD/MM/YYYY ou DD/MM/YYYY HH:MM:SS (Caixa, Itaú, Bradesco, OnilX, Santander, genérico)
+  const slashRegex = /(\d{2})\/(\d{2})\/(\d{4})/;
+  let match = trimmed.match(slashRegex);
   if (match) {
-    const month = match[1];
-    const year = match[2];
-    const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    const month = match[2];
+    const year = match[3];
     return `${monthNames[parseInt(month) - 1]} de ${year}`;
+  }
+
+  // Formato 2: DD-MM-YYYY (algumas exportações de sistema)
+  const dashRegex = /(\d{2})-(\d{2})-(\d{4})/;
+  match = trimmed.match(dashRegex);
+  if (match) {
+    const month = match[2];
+    const year = match[3];
+    return `${monthNames[parseInt(month) - 1]} de ${year}`;
+  }
+
+  // Formato 3: YYYY-MM-DD (ISO format)
+  const isoRegex = /(\d{4})-(\d{2})-(\d{2})/;
+  match = trimmed.match(isoRegex);
+  if (match) {
+    const year = match[1];
+    const month = match[2];
+    return `${monthNames[parseInt(month) - 1]} de ${year}`;
+  }
+
+  // Formato 4: DD/MM/YYYY HH:MM ou DD/MM/YYYY HH:MM:SS (com timestamp)
+  const timestampRegex = /(\d{2})\/(\d{2})\/(\d{4})\s+\d{2}:\d{2}/;
+  match = trimmed.match(timestampRegex);
+  if (match) {
+    const month = match[2];
+    const year = match[3];
+    return `${monthNames[parseInt(month) - 1]} de ${year}`;
+  }
+
+  // Formato 5: DD/MM (apenas dia/mês, assumir ano atual)
+  const shortRegex = /^(\d{2})\/(\d{2})$/;
+  match = trimmed.match(shortRegex);
+  if (match) {
+    const month = match[2];
+    const year = new Date().getFullYear().toString();
+    return `${monthNames[parseInt(month) - 1]} de ${year}`;
+  }
+
+  // Formato 6: Português localizado - "Quarta, 24 de setembro de 2025"
+  // Padrão: Dia da semana, DD de mês_em_português de YYYY
+  const portugueseLocalizedRegex = /\d{2}\s+de\s+([a-záéíóú]+)\s+de\s+(\d{4})/i;
+  match = trimmed.match(portugueseLocalizedRegex);
+  if (match) {
+    const monthName = match[1].toLowerCase();
+    const year = match[2];
+    const monthNumber = portugueseMonthNames[monthName as keyof typeof portugueseMonthNames];
+    if (monthNumber) {
+      return `${monthNames[monthNumber - 1]} de ${year}`;
+    }
   }
 
   return null;

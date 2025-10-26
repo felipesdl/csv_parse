@@ -5,27 +5,12 @@ import { useComparisonStore } from "@/store/comparisonStore";
 import { BANK_TEMPLATES } from "@/lib/bankTemplates";
 import { Eye, EyeOff, Settings } from "lucide-react";
 import { formatBankReference } from "@/utils/referenceFormatter";
-import { formatValue as formatUtilValue, FormatSettings as UtilFormatSettings } from "@/utils/formatUtils";
-import { extractNumericValue } from "@/utils/formatUtils";
-
-// Função para limpar e parsear valores em formato brasileiro
-function parseValueBR(valor: string | number): number {
-  if (valor === null || valor === undefined || valor === "") return 0;
-
-  let cleaned = String(valor).replace(/R\$/g, "").trim().replace(/\s+/g, "").replace(/\./g, "").replace(",", ".");
-
-  const num = parseFloat(cleaned);
-  return isNaN(num) ? 0 : num;
-}
-
-interface FormatSettings {
-  dateFormat: "full" | "date-only" | "day-only";
-  showNegativeAsPositive: boolean;
-}
+import { formatValue as formatUtilValue, FormatSettings, extractNumericValue, parseValueBR } from "@/utils/formatUtils";
 
 const DEFAULT_FORMAT_SETTINGS: FormatSettings = {
   dateFormat: "date-only",
   showNegativeAsPositive: false,
+  splitByPosNeg: false,
 };
 
 export function ExtractTablesView() {
@@ -76,17 +61,19 @@ export function ExtractTablesView() {
       // Se a coluna é Data, nunca formatar como monetário
       if (columnName === "Data" || columnName === "Data Lançamento" || columnName === "Data de Lançamento") {
         // Tratar como data
-        const utilSettings: UtilFormatSettings = {
+        const utilSettings: FormatSettings = {
           dateFormat: formatSettings.dateFormat,
           showNegativeAsPositive: false, // Datas nunca devem ser mostradas como positivas
+          splitByPosNeg: false,
         };
         return formatUtilValue(strValue, utilSettings);
       }
 
       // Usar a função de formatação centralizada que suporta todos os formatos
-      const utilSettings: UtilFormatSettings = {
+      const utilSettings: FormatSettings = {
         dateFormat: formatSettings.dateFormat,
         showNegativeAsPositive: formatSettings.showNegativeAsPositive,
+        splitByPosNeg: formatSettings.splitByPosNeg,
       };
 
       // Usa a função centralizada que já trata datas, números, etc

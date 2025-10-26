@@ -2,11 +2,10 @@
  * Utilitários para formatação de dados
  */
 
-export interface FormatSettings {
-  dateFormat: "full" | "date-only" | "day-only";
-  showNegativeAsPositive: boolean;
-  splitByPosNeg?: boolean;
-}
+import { FormatSettings } from "@/types";
+
+// Re-export for convenience (can import from either @/utils/formatUtils or @/types)
+export type { FormatSettings };
 
 /**
  * Detecta se uma string é uma data

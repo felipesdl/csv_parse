@@ -4,16 +4,7 @@ import React, { useMemo } from "react";
 import { useComparisonStore } from "@/store/comparisonStore";
 import { BANK_TEMPLATES } from "@/lib/bankTemplates";
 import { formatBankReference } from "@/utils/referenceFormatter";
-
-// Função para limpar e parsear valores em formato brasileiro
-function parseValueBR(valor: string | number): number {
-  if (valor === null || valor === undefined || valor === "") return 0;
-
-  let cleaned = String(valor).replace(/R\$/g, "").trim().replace(/\s+/g, "").replace(/\./g, "").replace(",", ".");
-
-  const num = parseFloat(cleaned);
-  return isNaN(num) ? 0 : num;
-}
+import { parseValueBR } from "@/utils/formatUtils";
 
 interface ConsolidationStats {
   bankName: string;
