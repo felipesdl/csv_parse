@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { QueryProvider } from "@/providers/QueryProvider";
+import { ToastProvider } from "@/providers/ToastProvider";
 
 export const metadata: Metadata = {
   title: "Café Dashboard - Importador de CSV",
@@ -15,7 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <ToastProvider />
+          {children}
+        </QueryProvider>
       </body>
     </html>
   );

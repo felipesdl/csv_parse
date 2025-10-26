@@ -5,6 +5,7 @@
 export interface FormatSettings {
   dateFormat: "full" | "date-only" | "day-only";
   showNegativeAsPositive: boolean;
+  splitByPosNeg?: boolean;
 }
 
 /**
@@ -61,7 +62,7 @@ export function isNumericValue(value: string): boolean {
  * Mantém o sinal negativo se existir
  * Formato esperado: "R$ -1.234,56" (brasileiro) ou "$ -1,234.56" (americano)
  */
-function extractNumericValue(value: string): number {
+export function extractNumericValue(value: string): number {
   const strValue = String(value);
 
   // Detecta se é negativo (pode ter - em qualquer lugar)
@@ -118,8 +119,9 @@ export function formatDate(dateStr: string, format: "full" | "date-only" | "day-
  * Formata um valor numérico
  * @param value String ou número (pode conter R$, símbolos, etc)
  * @param showAsPositive Se true, converte negativos em positivos
+ * @param splitByPosNeg Se true, usa colunas separadas (Crédito/Débito)
  */
-export function formatNumeric(value: string | number, showAsPositive: boolean): string {
+export function formatNumeric(value: string | number, showAsPositive: boolean, splitByPosNeg?: boolean): string {
   const strValue = String(value);
   const num = extractNumericValue(strValue);
 
@@ -152,7 +154,7 @@ export function formatValue(value: string | number, settings: FormatSettings): s
 
   // Verifica se é número
   if (isNumericValue(strValue)) {
-    return formatNumeric(strValue, settings.showNegativeAsPositive);
+    return formatNumeric(strValue, settings.showNegativeAsPositive, settings.splitByPosNeg);
   }
 
   // Retorna como está
