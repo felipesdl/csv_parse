@@ -10,12 +10,7 @@ import { FormattingPanel } from "@/components/formatting";
 function parseValueBR(valor: string | number): number {
   if (valor === null || valor === undefined || valor === "") return 0;
 
-  let cleaned = String(valor)
-    .replace(/R\$/g, "")
-    .trim()
-    .replace(/\s+/g, "")
-    .replace(/\./g, "")
-    .replace(",", ".");
+  let cleaned = String(valor).replace(/R\$/g, "").trim().replace(/\s+/g, "").replace(/\./g, "").replace(",", ".");
 
   const num = parseFloat(cleaned);
   return isNaN(num) ? 0 : num;
@@ -45,18 +40,21 @@ export function ExtractTablesView() {
   const showSideBySide = comparedFiles.length >= 2;
 
   // Inicializar visibleColumns para cada arquivo
-  const initializeVisibleColumns = useCallback((fileId: string, columns: string[]) => {
-    if (!visibleColumns[fileId]) {
-      const newVisible: Record<string, boolean> = {};
-      columns.forEach((col) => {
-        newVisible[col] = true;
-      });
-      setVisibleColumns((prev) => ({
-        ...prev,
-        [fileId]: newVisible,
-      }));
-    }
-  }, [visibleColumns]);
+  const initializeVisibleColumns = useCallback(
+    (fileId: string, columns: string[]) => {
+      if (!visibleColumns[fileId]) {
+        const newVisible: Record<string, boolean> = {};
+        columns.forEach((col) => {
+          newVisible[col] = true;
+        });
+        setVisibleColumns((prev) => ({
+          ...prev,
+          [fileId]: newVisible,
+        }));
+      }
+    },
+    [visibleColumns]
+  );
 
   const toggleColumnVisibility = useCallback((fileId: string, column: string) => {
     setVisibleColumns((prev) => ({
@@ -203,23 +201,17 @@ export function ExtractTablesView() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                 <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                   <p className="text-xs font-medium text-green-700 mb-1">Créditos</p>
-                  <p className="text-sm font-bold text-green-900">
-                    R$ {totals.totalCredito.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                  </p>
+                  <p className="text-sm font-bold text-green-900">R$ {totals.totalCredito.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
                 </div>
 
                 <div className="bg-red-50 border border-red-200 rounded-lg p-3">
                   <p className="text-xs font-medium text-red-700 mb-1">Débitos</p>
-                  <p className="text-sm font-bold text-red-900">
-                    R$ {Math.abs(totals.totalDebito).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                  </p>
+                  <p className="text-sm font-bold text-red-900">R$ {Math.abs(totals.totalDebito).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
                 </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <p className="text-xs font-medium text-blue-700 mb-1">Valor Inicial</p>
-                  <p className="text-sm font-bold text-blue-900">
-                    R$ {totals.valorInicial.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                  </p>
+                  <p className="text-sm font-bold text-blue-900">R$ {totals.valorInicial.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
                 </div>
 
                 <div
@@ -260,11 +252,7 @@ export function ExtractTablesView() {
                           : "bg-gray-200 text-gray-600 border border-gray-300"
                       }`}
                     >
-                      {visibleColumns[file.id]?.[col] !== false ? (
-                        <Eye size={12} />
-                      ) : (
-                        <EyeOff size={12} />
-                      )}
+                      {visibleColumns[file.id]?.[col] !== false ? <Eye size={12} /> : <EyeOff size={12} />}
                       {col}
                     </button>
                   ))}

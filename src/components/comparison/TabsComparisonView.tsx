@@ -44,9 +44,7 @@ export function TabsComparisonView({ onOpenColumnMapper }: TabsComparisonViewPro
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-6 py-4 font-medium transition border-b-2 ${
-                activeTab === tab.id
-                  ? "text-blue-600 border-blue-600 bg-blue-50"
-                  : "text-gray-700 border-transparent hover:bg-gray-50"
+                activeTab === tab.id ? "text-blue-600 border-blue-600 bg-blue-50" : "text-gray-700 border-transparent hover:bg-gray-50"
               }`}
             >
               {tab.icon}

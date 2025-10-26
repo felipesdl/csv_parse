@@ -131,7 +131,7 @@ export function parseCSV(file: File, delimiter?: string): Promise<{ rows: Parsed
 
 export async function detectAndParseCSV(file: File, forcedBank?: string): Promise<{ rows: ParsedRow[]; columns: string[]; bank: string; month: string }> {
   const fileContent = await file.text();
-  
+
   // NÃO fazer detecção automática - sempre requer banco forçado
   if (!forcedBank) {
     throw new Error("É necessário selecionar o banco manualmente");

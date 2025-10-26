@@ -43,9 +43,9 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
             // Se tiverem similaridade alta ou estiverem na lista comum
             if (
               normalized1 === normalized2 ||
-              normalized1.includes("data") && normalized2.includes("data") ||
-              normalized1.includes("valor") && normalized2.includes("valor") ||
-              normalized1.includes("descri") && normalized2.includes("descri")
+              (normalized1.includes("data") && normalized2.includes("data")) ||
+              (normalized1.includes("valor") && normalized2.includes("valor")) ||
+              (normalized1.includes("descri") && normalized2.includes("descri"))
             ) {
               const standardName = column; // Usar primeira ocorrência como padrão
               if (!autoMapping[standardName]) {
@@ -85,9 +85,7 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 p-6">
           <h2 className="text-2xl font-bold text-gray-900">Mapeamento de Colunas</h2>
-          <p className="text-sm text-gray-600 mt-2">
-            Configure como as colunas de diferentes bancos devem ser comparadas
-          </p>
+          <p className="text-sm text-gray-600 mt-2">Configure como as colunas de diferentes bancos devem ser comparadas</p>
         </div>
 
         {/* Content */}
@@ -124,17 +122,16 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
                           Mapeado em {Object.keys(fileMapping).length} de {comparedFiles.length} arquivos
                         </p>
                       </div>
-                      <ChevronDown
-                        size={20}
-                        className={`transition ${expandedColumns.has(standardName) ? "rotate-180" : ""}`}
-                      />
+                      <ChevronDown size={20} className={`transition ${expandedColumns.has(standardName) ? "rotate-180" : ""}`} />
                     </button>
 
                     {expandedColumns.has(standardName) && (
                       <div className="mt-4 space-y-3 border-t pt-4">
                         {comparedFiles.map((file) => (
                           <div key={file.id} className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">{file.bankName} ({file.bankId})</label>
+                            <label className="block text-sm font-medium text-gray-700">
+                              {file.bankName} ({file.bankId})
+                            </label>
                             <select
                               value={fileMapping[file.id] || ""}
                               onChange={(e) => handleColumnSelect(standardName, file.id, e.target.value)}
@@ -179,16 +176,10 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
 
         {/* Footer */}
         <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6 flex gap-3 justify-end">
-          <button
-            onClick={onClose}
-            className="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium transition"
-          >
+          <button onClick={onClose} className="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium transition">
             Cancelar
           </button>
-          <button
-            onClick={handleSave}
-            className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition"
-          >
+          <button onClick={handleSave} className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition">
             <Check size={18} />
             Salvar Mapeamento
           </button>

@@ -74,8 +74,7 @@ export const useComparisonStore = create<ComparisonState>()(
         set({ commonColumns: Array.from(common) });
       },
 
-      setColumnMapping: (mapping: ColumnMapping) =>
-        set({ columnMappings: mapping }),
+      setColumnMapping: (mapping: ColumnMapping) => set({ columnMappings: mapping }),
 
       clearAll: () =>
         set({

@@ -16,7 +16,7 @@ interface ComparativeAnalysisProps {
 // Função para limpar e parsear valores em formato brasileiro
 function parseValueBR(valor: string | number): number {
   if (valor === null || valor === undefined || valor === "") return 0;
-  
+
   // Remove "R$", espaços extras, etc
   let cleaned = String(valor)
     .replace(/R\$/g, "")
@@ -24,7 +24,7 @@ function parseValueBR(valor: string | number): number {
     .replace(/\s+/g, "") // Remove todos os espaços
     .replace(/\./g, "") // Remove separador de milhares
     .replace(",", "."); // Converte vírgula em ponto
-  
+
   const num = parseFloat(cleaned);
   return isNaN(num) ? 0 : num;
 }
@@ -47,9 +47,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
       }
 
       // Procurar por tipo de transação (para separar débito/crédito)
-      const typeCol = file.columns.find(
-        (col) => col.toLowerCase().includes("tipo") || col.toLowerCase().includes("transação")
-      );
+      const typeCol = file.columns.find((col) => col.toLowerCase().includes("tipo") || col.toLowerCase().includes("transação"));
       if (typeCol) {
         typeColumnMap[file.id] = typeCol;
       }
@@ -112,7 +110,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
       }
 
       const bankName = BANK_TEMPLATES[file.bankId]?.name || file.bankId;
-      
+
       bankStats.push({
         name: bankName,
         fileId: file.id,
@@ -127,8 +125,8 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
     // Dados para gráfico comparativo (créditos vs débitos)
     const comparisonChartData = bankStats.map((item) => ({
       name: item.name,
-      "Créditos": item.totalCredito,
-      "Débitos": Math.abs(item.totalDebito),
+      Créditos: item.totalCredito,
+      Débitos: Math.abs(item.totalDebito),
     }));
 
     // Dados para pie chart de distribuição
@@ -155,10 +153,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
         <p className="text-gray-600 mb-4">📊 Nenhuma coluna "Valor" encontrada para comparação</p>
-        <button
-          onClick={onOpenColumnMapper}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition"
-        >
+        <button onClick={onOpenColumnMapper} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition">
           Configurar Mapeamento de Colunas
         </button>
       </div>
@@ -171,10 +166,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-gray-900">Comparação: Créditos vs Débitos</h3>
-          <button
-            onClick={onOpenColumnMapper}
-            className="text-sm px-3 py-1 text-blue-600 hover:bg-blue-50 rounded transition"
-          >
+          <button onClick={onOpenColumnMapper} className="text-sm px-3 py-1 text-blue-600 hover:bg-blue-50 rounded transition">
             ⚙️ Configurar Colunas
           </button>
         </div>
@@ -186,9 +178,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip
-              formatter={(value) =>
-                typeof value === "number" ? `R$ ${Math.abs(value).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : value
-              }
+              formatter={(value) => (typeof value === "number" ? `R$ ${Math.abs(value).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : value)}
             />
             <Legend />
             <Bar dataKey="Créditos" fill="#22c55e" />
@@ -220,11 +210,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
                     <Cell key={`cell-${index}`} fill={COLORS_CREDIT[index % COLORS_CREDIT.length]} />
                   ))}
                 </Pie>
-                <Tooltip
-                  formatter={(value) =>
-                    typeof value === "number" ? `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : value
-                  }
-                />
+                <Tooltip formatter={(value) => (typeof value === "number" ? `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : value)} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -248,11 +234,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
                     <Cell key={`cell-${index}`} fill={COLORS_DEBIT[index % COLORS_DEBIT.length]} />
                   ))}
                 </Pie>
-                <Tooltip
-                  formatter={(value) =>
-                    typeof value === "number" ? `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : value
-                  }
-                />
+                <Tooltip formatter={(value) => (typeof value === "number" ? `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : value)} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -282,9 +264,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
                       R$ {stat.totalCredito.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                     </td>
                     <td className="text-right py-3 px-4 text-gray-600">{stat.countCredito}</td>
-                    <td className="text-right py-3 px-4 text-gray-600">
-                      R$ {avgCredito.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                    </td>
+                    <td className="text-right py-3 px-4 text-gray-600">R$ {avgCredito.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
                   </tr>
                 );
               })}
@@ -316,9 +296,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
                       R$ {Math.abs(stat.totalDebito).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                     </td>
                     <td className="text-right py-3 px-4 text-gray-600">{stat.countDebito}</td>
-                    <td className="text-right py-3 px-4 text-gray-600">
-                      R$ {avgDebito.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                    </td>
+                    <td className="text-right py-3 px-4 text-gray-600">R$ {avgDebito.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
                   </tr>
                 );
               })}
@@ -356,7 +334,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
                     <td className="text-right py-3 px-4 text-red-700 font-semibold">
                       R$ {Math.abs(stat.totalDebito).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                     </td>
-                    <td className="text-right py-3 px-4 font-semibold" style={{ color: saldoLiquido >= 0 ? '#16a34a' : '#dc2626' }}>
+                    <td className="text-right py-3 px-4 font-semibold" style={{ color: saldoLiquido >= 0 ? "#16a34a" : "#dc2626" }}>
                       R$ {saldoLiquido.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                     </td>
                   </tr>

@@ -8,12 +8,7 @@ import { BANK_TEMPLATES } from "@/lib/bankTemplates";
 function parseValueBR(valor: string | number): number {
   if (valor === null || valor === undefined || valor === "") return 0;
 
-  let cleaned = String(valor)
-    .replace(/R\$/g, "")
-    .trim()
-    .replace(/\s+/g, "")
-    .replace(/\./g, "")
-    .replace(",", ".");
+  let cleaned = String(valor).replace(/R\$/g, "").trim().replace(/\s+/g, "").replace(/\./g, "").replace(",", ".");
 
   const num = parseFloat(cleaned);
   return isNaN(num) ? 0 : num;
@@ -144,10 +139,7 @@ export function ConsolidationView() {
                     R$ {Math.abs(stat.totalDebito).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                   </td>
                   <td className="text-right px-4 py-3 text-gray-600">{stat.countDebito}</td>
-                  <td
-                    className="text-right px-4 py-3 font-semibold"
-                    style={{ color: stat.saldoLiquido >= 0 ? "#16a34a" : "#dc2626" }}
-                  >
+                  <td className="text-right px-4 py-3 font-semibold" style={{ color: stat.saldoLiquido >= 0 ? "#16a34a" : "#dc2626" }}>
                     R$ {stat.saldoLiquido.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                   </td>
                 </tr>
@@ -164,9 +156,7 @@ export function ConsolidationView() {
           {/* Card Créditos */}
           <div className="bg-green-50 border border-green-200 rounded-lg p-6">
             <p className="text-sm font-medium text-green-700 mb-2">💚 Total de Créditos</p>
-            <p className="text-2xl font-bold text-green-900">
-              R$ {consolidationData.totalCredito.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-            </p>
+            <p className="text-2xl font-bold text-green-900">R$ {consolidationData.totalCredito.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
             <p className="text-xs text-green-700 mt-2">{consolidationData.countCredito} transações</p>
           </div>
 
@@ -190,10 +180,7 @@ export function ConsolidationView() {
             <p className="text-sm font-medium mb-2" style={{ color: consolidationData.saldoLiquido >= 0 ? "#166534" : "#991b1b" }}>
               💵 Saldo Líquido
             </p>
-            <p
-              className="text-2xl font-bold"
-              style={{ color: consolidationData.saldoLiquido >= 0 ? "#166534" : "#991b1b" }}
-            >
+            <p className="text-2xl font-bold" style={{ color: consolidationData.saldoLiquido >= 0 ? "#166534" : "#991b1b" }}>
               R$ {consolidationData.saldoLiquido.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
             </p>
             <p className="text-xs mt-2" style={{ color: consolidationData.saldoLiquido >= 0 ? "#15803d" : "#b91c1c" }}>
@@ -222,16 +209,12 @@ export function ConsolidationView() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <p className="text-xs text-gray-600 mb-1">Créditos</p>
-                  <p className="text-lg font-bold text-green-700">
-                    R$ {stat.totalCredito.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                  </p>
+                  <p className="text-lg font-bold text-green-700">R$ {stat.totalCredito.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
                   <p className="text-xs text-gray-500">{stat.countCredito} tx</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-600 mb-1">Débitos</p>
-                  <p className="text-lg font-bold text-red-700">
-                    R$ {Math.abs(stat.totalDebito).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                  </p>
+                  <p className="text-lg font-bold text-red-700">R$ {Math.abs(stat.totalDebito).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
                   <p className="text-xs text-gray-500">{stat.countDebito} tx</p>
                 </div>
                 <div>
@@ -243,9 +226,7 @@ export function ConsolidationView() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-600 mb-1">Total</p>
-                  <p className="text-lg font-bold text-blue-700">
-                    R$ {stat.totalGeral.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                  </p>
+                  <p className="text-lg font-bold text-blue-700">R$ {stat.totalGeral.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
                   <p className="text-xs text-gray-500">{stat.countCredito + stat.countDebito} tx</p>
                 </div>
               </div>

@@ -37,7 +37,7 @@ export function ComparisonCSVUploader({ onUploadSuccess }: ComparisonCSVUploader
     setCurrentFile(file);
     setValidationErrors([]);
     setUploadError(null);
-    
+
     // Sempre mostrar o seletor de banco - sem detecção automática
     setCurrentFile(file);
     setPendingFile({
