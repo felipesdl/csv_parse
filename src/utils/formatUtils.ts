@@ -17,6 +17,27 @@ export function isDateValue(value: string): boolean {
 }
 
 /**
+ * Parseia um valor em formato brasileiro (com espaços, R$, vírgula decimal)
+ * Exemplo: "R$           646,00" -> 646.00
+ * Exemplo: "-1.234,56" -> -1234.56
+ * @returns Número parseado ou 0 se inválido
+ */
+export function parseValueBR(valor: string | number): number {
+  if (valor === null || valor === undefined || valor === "") return 0;
+
+  // Remove "R$", espaços extras, etc
+  let cleaned = String(valor)
+    .replace(/R\$/g, "")
+    .trim()
+    .replace(/\s+/g, "") // Remove todos os espaços
+    .replace(/\./g, "") // Remove separador de milhares
+    .replace(",", "."); // Converte vírgula em ponto
+
+  const num = parseFloat(cleaned);
+  return isNaN(num) ? 0 : num;
+}
+
+/**
  * Detecta se uma string é um número (com ou sem símbolo monetário)
  */
 export function isNumericValue(value: string): boolean {

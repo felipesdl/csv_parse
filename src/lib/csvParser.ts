@@ -1,6 +1,7 @@
 import Papa from "papaparse";
 import { ParsedRow, ValidationError, TableData } from "@/types";
 import { detectBankFromContent, getTemplateByBank, detectMonthFromData, detectDelimiter, BANK_TEMPLATES } from "./bankTemplates";
+import { HEADER_KEYWORDS, ERROR_MESSAGES } from "@/utils/constants";
 
 /**
  * Remove linhas de metadados (linhas antes do cabeçalho real)
@@ -11,7 +12,7 @@ function cleanMetadataLines(content: string, delimiter: string): string {
   const lines = content.split("\n").map((l) => l.trim());
 
   // Palavras-chave que indicam cabeçalho real (coloque as mais prováveis)
-  const headerKeywords = ["data", "lançamento", "histórico", "descrição", "valor", "saldo", "referência", "tipo", "transação"];
+  const headerKeywords = HEADER_KEYWORDS;
 
   // Características de um cabeçalho legítimo
   const isRealHeader = (line: string): boolean => {
@@ -67,11 +68,9 @@ function cleanMetadataLines(content: string, delimiter: string): string {
   // Se encontrou um header válido, retornar do header em diante
   if (headerIndex >= 0) {
     const result = lines.slice(headerIndex).join("\n");
-    console.log(`[cleanMetadataLines] Removidas ${headerIndex} linhas de metadata. Primeira linha do header: "${lines[headerIndex].substring(0, 80)}..."`);
     return result;
   }
 
-  console.warn("[cleanMetadataLines] Nenhum header detectado, usando conteúdo original");
   // Se não encontrou, retornar original
   return content;
 }
@@ -134,13 +133,10 @@ export async function detectAndParseCSV(file: File, forcedBank?: string): Promis
 
   // NÃO fazer detecção automática - sempre requer banco forçado
   if (!forcedBank) {
-    throw new Error("É necessário selecionar o banco manualmente");
+    throw new Error(ERROR_MESSAGES.BANK_REQUIRED);
   }
 
   let template = getTemplateByBank(forcedBank);
-
-  // Se foi forçado um banco, usar o delimitador do template
-  console.log(`[detectAndParseCSV] Banco forçado: "${forcedBank}", usando delimiter: "${template.delimiter}"`);
 
   // Limpar linhas de metadados (linhas antes do cabeçalho real)
   const cleanedContent = cleanMetadataLines(fileContent, template.delimiter);

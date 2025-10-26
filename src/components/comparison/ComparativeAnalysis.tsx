@@ -4,29 +4,10 @@ import React, { useMemo } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import { useComparisonStore } from "@/store/comparisonStore";
 import { BANK_TEMPLATES } from "@/lib/bankTemplates";
-
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8", "#82CA9D"];
-const COLORS_CREDIT = ["#22c55e", "#16a34a", "#22863a", "#1e7e34"];
-const COLORS_DEBIT = ["#ef4444", "#dc2626", "#991b1b", "#7f1d1d"];
+import { parseValueBR, COLORS_GENERIC, COLORS_CREDIT, COLORS_DEBIT } from "@/utils";
 
 interface ComparativeAnalysisProps {
   onOpenColumnMapper: () => void;
-}
-
-// Função para limpar e parsear valores em formato brasileiro
-function parseValueBR(valor: string | number): number {
-  if (valor === null || valor === undefined || valor === "") return 0;
-
-  // Remove "R$", espaços extras, etc
-  let cleaned = String(valor)
-    .replace(/R\$/g, "")
-    .trim()
-    .replace(/\s+/g, "") // Remove todos os espaços
-    .replace(/\./g, "") // Remove separador de milhares
-    .replace(",", "."); // Converte vírgula em ponto
-
-  const num = parseFloat(cleaned);
-  return isNaN(num) ? 0 : num;
 }
 
 export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisProps) {

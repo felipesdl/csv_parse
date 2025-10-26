@@ -1,132 +1,252 @@
-# Café Dashboard - Importador de CSV Bancário# 🏗️ Café Dashboard - Importador de CSV Bancário# 🏗️ Café Dashboard - Importador de CSV Bancário# 🏗️ Café Dashboard - Importador de CSV BancárioThis is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ☕ Café Dashboard# Café Dashboard - Importador de CSV Bancário# 🏗️ Café Dashboard - Importador de CSV Bancário# 🏗️ Café Dashboard - Importador de CSV Bancário# 🏗️ Café Dashboard - Importador de CSV BancárioThis is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Dashboard moderno com cache inteligente, filtros avançados, offline support e zero memory leaks.
+**Ferramenta poderosa para análise e comparação de extratos bancários em formato CSV.**Dashboard moderno com cache inteligente, filtros avançados, offline support e zero memory leaks.
 
-## Características Principais> Dashboard moderno com cache inteligente, filtros avançados, offline support e zero memory leaksUm dashboard moderno e intuitivo para importação, manipulação e exportação de dados bancários em formato CSV com **filtros avançados por coluna** (v0.2.0).Um dashboard moderno e intuitivo para importação, manipulação e exportação de dados bancários em formato CSV.## Getting Started
+---## Características Principais> Dashboard moderno com cache inteligente, filtros avançados, offline support e zero memory leaksUm dashboard moderno e intuitivo para importação, manipulação e exportação de dados bancários em formato CSV com **filtros avançados por coluna** (v0.2.0).Um dashboard moderno e intuitivo para importação, manipulação e exportação de dados bancários em formato CSV.## Getting Started
 
-### Upload Inteligente
+## 🚀 Começar Rápido### Upload Inteligente
 
-- Detecção automática de banco (Caixa, Itaú, Bradesco, Santander, Banco Inter)
+### Instalação- Detecção automática de banco (Caixa, Itaú, Bradesco, Santander, Banco Inter)
 
-- Suporte a drag & drop e clique## ✨ Características Principais## 🌟 Características Principais## 🌟 Características PrincipaisFirst, run the development server:
-
-- Seleção manual com fallback automático
-
-- Detecção automática de mês/ano
-
-- Validação e limpeza de metadados
-
-### 📤 Upload Inteligente### ✨ Upload Inteligente### ✨ Upload Inteligente```bash
-
-### Tabela Interativa
-
-- Ordenação por qualquer coluna- 🎯 **Detecção automática de banco**: Caixa, Itaú, Bradesco, Santander, Banco Inter
-
-- Filtro global em tempo real
-
-- Filtros avançados por coluna (texto, número, seleção múltipla)- 📤 Suporte a drag & drop e clique- 🎯 Detecção automática de banco (Caixa, Itaú, Bradesco, Santander)- 🎯 Detecção automática de banco (Caixa, Itaú, Bradesco, Santander)npm run dev
-
-- Mostrar/ocultar colunas
-
-- Deletar linhas individuais ou em lote- 🏦 Seleção manual com fallback automático
-
-- Detecção automática de duplicatas
-
-- 📅 Detecção automática de mês/ano- 📤 Suporte a drag & drop e clique
-
-### Export & Persistência
-
-- Copiar para clipboard (sem headers)- ✅ Validação e limpeza de metadados
-
-- Exportar como CSV (download)
-
-- Persistência em localStorage (5 min)- 🏦 Seleção manual de banco com fallback- 📤 Suporte a drag & drop e clique# or
-
-- Cache inteligente com TanStack Query
-
-- Sincronização automática entre abas### 📊 Tabela Interativa
-
-### Performance- ⬆️⬇️ Ordenação por qualquer coluna- 📅 Detecção automática de mês/ano
-
-- 40x mais rápido que versão anterior
-
-- Cache hit: <50ms- 🔍 Filtro global em tempo real
-
-- Zero memory leaks
-
-- Simple HTML table (sem overhead)- 🎯 **Filtros avançados**: texto, número, seleção múltipla- 🏦 Seleção manual de banco com fallbackyarn dev
-
-## Quick Start- 👁️ Mostrar/ocultar colunas
-
-```bash- 🗑️ Deletar linhas individuais ou em lote### 📊 Tabela Interativa Poderosa
+```bash- Suporte a drag & drop e clique## ✨ Características Principais## 🌟 Características Principais## 🌟 Características PrincipaisFirst, run the development server:
 
 npm install
 
-npm run dev- 🚨 Detecção automática de duplicatas
+npm run dev- Seleção manual com fallback automático
 
 ```
 
-- 📅 Detecção automática de mês/ano# or
+- Detecção automática de mês/ano
 
-Abra http://localhost:3000
+Abra [http://localhost:3000](http://localhost:3000)
 
-### 💾 Export & Persistência
+- Validação e limpeza de metadados
 
-## Documentação
+### Build para Produção
 
-- 📋 **Copiar para clipboard** (sem headers)- ⬆️⬇️ Ordenação por qualquer coluna
+### 📤 Upload Inteligente### ✨ Upload Inteligente### ✨ Upload Inteligente```bash
 
-- **INDEX.md** - Índice de navegação (comece aqui!)
+````bash
+
+npm run build### Tabela Interativa
+
+npm start
+
+```- Ordenação por qualquer coluna- 🎯 **Detecção automática de banco**: Caixa, Itaú, Bradesco, Santander, Banco Inter
+
+
+
+---- Filtro global em tempo real
+
+
+
+## 📚 Documentação- Filtros avançados por coluna (texto, número, seleção múltipla)- 📤 Suporte a drag & drop e clique- 🎯 Detecção automática de banco (Caixa, Itaú, Bradesco, Santander)- 🎯 Detecção automática de banco (Caixa, Itaú, Bradesco, Santander)npm run dev
+
+
+
+Este projeto tem **2 documentos principais** que cobrem tudo:- Mostrar/ocultar colunas
+
+
+
+### 👨‍💻 [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md)- Deletar linhas individuais ou em lote- 🏦 Seleção manual com fallback automático
+
+**Para Desenvolvedores**
+
+- Detecção automática de duplicatas
+
+Documentação técnica completa com:
+
+- 🏗️ Arquitetura do sistema  - 📅 Detecção automática de mês/ano- 📤 Suporte a drag & drop e clique
+
+- 📦 Stack tecnológico completo
+
+- 📁 Estrutura de arquivos organizada### Export & Persistência
+
+- 🔄 State management (Zustand + TanStack Query)
+
+- 📊 Data flows e APIs- Copiar para clipboard (sem headers)- ✅ Validação e limpeza de metadados
+
+- 📝 Tipos & Interfaces
+
+- 🛠️ Guia de desenvolvimento- Exportar como CSV (download)
+
+
+
+### 👤 [USER_GUIDE.md](./USER_GUIDE.md)- Persistência em localStorage (5 min)- 🏦 Seleção manual de banco com fallback- 📤 Suporte a drag & drop e clique# or
+
+**Para Usuários Finais**
+
+- Cache inteligente com TanStack Query
+
+Guia completo do usuário com:
+
+- 🎯 Primeiros passos- Sincronização automática entre abas### 📊 Tabela Interativa
+
+- 📤 Upload de arquivos
+
+- 📊 Comparação de bancos### Performance- ⬆️⬇️ Ordenação por qualquer coluna- 📅 Detecção automática de mês/ano
+
+- 📈 Análises e gráficos
+
+- 💾 Exportação de dados- 40x mais rápido que versão anterior
+
+- 💡 Dicas e truques
+
+- ❓ FAQ e troubleshooting- Cache hit: <50ms- 🔍 Filtro global em tempo real
+
+
+
+---- Zero memory leaks
+
+
+
+## ✨ Características Principais- Simple HTML table (sem overhead)- 🎯 **Filtros avançados**: texto, número, seleção múltipla- 🏦 Seleção manual de banco com fallbackyarn dev
+
+
+
+✅ **Múltiplos Bancos** - Caixa, Inter, Itaú, Bradesco, Santander, OnilX  ## Quick Start- 👁️ Mostrar/ocultar colunas
+
+✅ **Upload Flexível** - Drag & drop com seleção manual de banco
+
+✅ **Tabela Poderosa** - Sorting, filtros, busca global, visibilidade  ```bash- 🗑️ Deletar linhas individuais ou em lote### 📊 Tabela Interativa Poderosa
+
+✅ **Comparação** - Compare múltiplos bancos lado-a-lado
+
+✅ **Gráficos** - Créditos vs Débitos com análises  npm install
+
+✅ **Exportação** - Copiar para clipboard ou salvar CSV
+
+✅ **Formatação** - Customize datas e valores  npm run dev- 🚨 Detecção automática de duplicatas
+
+✅ **Performance** - Cache inteligente, 40x mais rápido
+
+✅ **Persistência** - localStorage mantém dados entre sessões  ```
+
+
+
+---- 📅 Detecção automática de mês/ano# or
+
+
+
+## 🏗️ Stack TecnológicoAbra http://localhost:3000
+
+
+
+- **Next.js 15** - Framework React com SSR e API### 💾 Export & Persistência
+
+- **React 18** - Biblioteca UI
+
+- **TypeScript 5.6** - Tipagem estática## Documentação
+
+- **Tailwind CSS 4** - Estilos utilitários
+
+- **Zustand 5** - State management- 📋 **Copiar para clipboard** (sem headers)- ⬆️⬇️ Ordenação por qualquer coluna
+
+- **TanStack Query 5** - Cache & sincronização
+
+- **Recharts 3.3** - Gráficos e visualizações- **INDEX.md** - Índice de navegação (comece aqui!)
+
+- **PapaParse 5.5** - Parsing de CSV
 
 - **README_TANSTACK.md** - Overview do TanStack Query- 📥 **Exportar como CSV** (download)
 
+---
+
 - **SETUP_GUIDE.md** - Instalação passo-a-passo
+
+## 📁 Estrutura
 
 - **TESTING.md** - 6 testes + debugging- 💿 **Persistência em localStorage** (5 min)- 🔍 Filtro global em tempo realpnpm dev
 
-- **ARCHITECTURE.md** - Design técnico
+````
 
-- **EXAMPLES.md** - Exemplos práticos- ⚡ **Cache inteligente** com TanStack Query
+src/- **ARCHITECTURE.md** - Design técnico
 
-## Stack- 🔄 Sincronização automática entre abas- 🎯 **Filtros avançados por coluna (NOVO!)**
+├── app/ # Next.js App Router
 
-- Next.js 15.0.0
+├── components/ # React Components- **EXAMPLES.md** - Exemplos práticos- ⚡ **Cache inteligente** com TanStack Query
 
-- React 18.3.1
+├── hooks/ # Custom Hooks
+
+├── lib/ # Business Logic## Stack- 🔄 Sincronização automática entre abas- 🎯 **Filtros avançados por coluna (NOVO!)**
+
+├── store/ # Zustand Stores
+
+├── types/ # TypeScript Types- Next.js 15.0.0
+
+├── utils/ # Utilitários
+
+└── providers/ # Providers- React 18.3.1
+
+````
 
 - TanStack Query 5.32.1### ⚡ Performance - 📝 Filtro de texto (busca por substring)### 📊 Tabela Interativa Poderosa# or
 
+---
+
 - Zustand 5.0.8
+
+## 🎯 Bancos Suportados
 
 - TypeScript 5.6.3- 🚀 **+40x mais rápido** que versão anterior
 
-- Tailwind CSS 4
+| Banco | ID | Delimitador |
 
-- PapaParse 5.5.3- ⏱️ Cache hit: <50ms - 🔢 Filtro numérico (valor exato)
+|-------|----|----|- Tailwind CSS 4
 
-## Status- 💾 Zero memory leaks
+| Caixa Econômica | `caixa` | `;` |
 
-✅ Production Ready - v1.0 (TanStack Query)- 🔧 Simple HTML table (sem overhead de framework) - ✓ Filtro seleção (múltiplos valores)- ⬆️⬇️ Ordenação por qualquer colunabun dev
+| Banco Inter | `inter` | `;` |- PapaParse 5.5.3- ⏱️ Cache hit: <50ms - 🔢 Filtro numérico (valor exato)
+
+| Itaú | `itau` | `,` |
+
+| Bradesco | `bradesco` | `,` |## Status- 💾 Zero memory leaks
+
+| Santander | `santander` | `,` |
+
+| OnilX | `onilx` | `;` |✅ Production Ready - v1.0 (TanStack Query)- 🔧 Simple HTML table (sem overhead de framework) - ✓ Filtro seleção (múltiplos valores)- ⬆️⬇️ Ordenação por qualquer colunabun dev
+
+| Genérico | `generic` | `,` |
 
 **Data**: 25 de Outubro de 2025
 
+---
+
 --- - 🚀 Detecção automática de tipo de coluna
+
+## 🧪 Validação
 
 ## 🚀 Quick Start- ✅ Seleção múltipla de linhas- 🔍 Filtro global em tempo real```
 
-```bash- 👁️ Mostrar/ocultar colunas
+```bash
 
-# 1. Instalar dependências
+npm run build   # Deve compilar sem erros```bash- 👁️ Mostrar/ocultar colunas
 
-npm install- 🚨 Detecção automática de duplicatas- ✅ Seleção múltipla de linhas
+npm run dev     # Deve rodar sem warnings
+
+```# 1. Instalar dependências
 
 
 
-# 2. Iniciar servidor- 🗑️ Deletar linhas individuais ou em lote
+---npm install- 🚨 Detecção automática de duplicatas- ✅ Seleção múltipla de linhas
+
+
+
+## 📞 Support
+
+
+
+- **Usuário:** Veja [USER_GUIDE.md#troubleshooting](./USER_GUIDE.md#troubleshooting)# 2. Iniciar servidor- 🗑️ Deletar linhas individuais ou em lote
+
+- **Desenvolvedor:** Veja [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md)
 
 npm run dev
 
+---
+
 - 👁️ Mostrar/ocultar colunasOpen [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+**v1.0 | Outubro 2025 | MIT License**
 
 # 3. Abrir no navegador
 
@@ -136,7 +256,7 @@ open http://localhost:3000### 💾 Persistência
 
 # 4. Fazer upload de um CSV bancário- 🚨 Detecção automática de duplicatas
 
-```
+````
 
 - 💿 Salvamento em localStorage
 
