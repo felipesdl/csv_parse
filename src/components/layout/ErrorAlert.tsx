@@ -18,7 +18,7 @@ export function ErrorAlert({ error, onClose }: ErrorAlertProps) {
         <h3 className="font-medium text-red-900">Erro</h3>
         <p className="text-sm text-red-700 mt-1">{error}</p>
       </div>
-      <button onClick={onClose} className="text-red-600 hover:text-red-700 flex-shrink-0">
+      <button onClick={onClose} className="text-red-600 hover:text-red-700 flex-shrink-0 cursor-pointer">
         <X size={20} />
       </button>
     </div>

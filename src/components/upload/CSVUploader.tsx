@@ -129,7 +129,7 @@ export function CSVUploader({ onUploadSuccess }: CSVUploaderProps = {}) {
             onClick={() => {
               setValidationErrors([]);
             }}
-            className="px-4 py-2 bg-red-600 text-white rounded text-sm font-medium hover:bg-red-700"
+            className="px-4 py-2 bg-red-600 text-white rounded text-sm font-medium hover:bg-red-700 cursor-pointer"
           >
             Fechar
           </button>

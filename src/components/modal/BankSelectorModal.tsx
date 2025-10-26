@@ -68,13 +68,13 @@ export function BankSelectorModal({ isOpen, onClose, onConfirm, suggestedBank, f
         </div>
 
         <div className="flex gap-3 pt-4 border-t">
-          <button onClick={onClose} className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded hover:bg-gray-200 font-medium transition">
+          <button onClick={onClose} className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded hover:bg-gray-200 font-medium transition cursor-pointer">
             Cancelar
           </button>
           <button
             onClick={handleConfirm}
             disabled={!selectedBank}
-            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed font-medium transition"
+            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed font-medium transition cursor-pointer"
           >
             Confirmar
           </button>

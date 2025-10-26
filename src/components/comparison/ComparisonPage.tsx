@@ -29,7 +29,7 @@ export function ComparisonPage() {
           </div>
           <button
             onClick={() => setShowUploadModal(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition shadow-sm"
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition shadow-sm cursor-pointer"
           >
             <Upload size={20} />
             Adicionar Arquivo
@@ -73,7 +73,7 @@ export function ComparisonPage() {
                       </div>
                       <p className="text-xs text-gray-500">{new Date(file.uploadDate).toLocaleString("pt-BR")}</p>
                     </div>
-                    <button onClick={() => removeFile(file.id)} className="p-1 hover:bg-red-50 rounded transition">
+                    <button onClick={() => removeFile(file.id)} className="p-1 hover:bg-red-50 rounded transition cursor-pointer">
                       <X size={18} className="text-red-500" />
                     </button>
                   </div>
@@ -109,7 +109,7 @@ export function ComparisonPage() {
             <p className="text-sm text-gray-600 mb-6">Importe arquivos de diferentes bancos para começar a comparação</p>
             <button
               onClick={() => setShowUploadModal(true)}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition cursor-pointer"
             >
               <Upload size={20} />
               Selecionar Arquivo

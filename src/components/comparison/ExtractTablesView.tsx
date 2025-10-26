@@ -246,7 +246,7 @@ export function ExtractTablesView() {
                     <button
                       key={col}
                       onClick={() => toggleColumnVisibility(file.id, col)}
-                      className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition whitespace-nowrap ${
+                      className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition whitespace-nowrap cursor-pointer ${
                         visibleColumns[file.id]?.[col] !== false
                           ? "bg-blue-100 text-blue-700 border border-blue-300"
                           : "bg-gray-200 text-gray-600 border border-gray-300"

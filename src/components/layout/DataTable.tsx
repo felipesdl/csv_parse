@@ -342,6 +342,9 @@ export function DataTable() {
                     onCopyColumn={handleCopyColumn}
                     onDeleteSelected={handleDeleteSelected}
                     tableId={label}
+                    sortColumn={sortColumn}
+                    sortOrder={sortOrder}
+                    onColumnSort={handleColumnSort}
                   />
                 )}
               />
@@ -359,6 +362,9 @@ export function DataTable() {
             onCopyColumn={handleCopyColumn}
             onDeleteSelected={handleDeleteSelected}
             tableId="main"
+            sortColumn={sortColumn}
+            sortOrder={sortOrder}
+            onColumnSort={handleColumnSort}
           />
         )}
       </div>

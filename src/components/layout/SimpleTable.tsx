@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useMemo } from "react";
-import { AlertCircle, Eye, EyeOff, Trash2, Copy } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Trash2, Copy, ChevronUp, ChevronDown } from "lucide-react";
 import { ParsedRow } from "@/types";
 import { formatValue } from "@/utils/formatUtils";
 import { ColumnSettings } from "@/types";
@@ -21,6 +21,9 @@ interface SimpleTableProps {
   onCopyColumn: (column: string) => void;
   onDeleteSelected: () => void;
   tableId?: string; // Identificador único para a tabela (usado em modo dividido)
+  sortColumn?: string | null;
+  sortOrder?: "asc" | "desc" | null;
+  onColumnSort?: (columnName: string) => void;
 }
 
 /**
@@ -38,6 +41,9 @@ export function SimpleTable({
   onCopyColumn,
   onDeleteSelected,
   tableId = "main",
+  sortColumn,
+  sortOrder,
+  onColumnSort,
 }: SimpleTableProps) {
   // Criar chave para os índices com prefixo do tableId
   const makeRowKey = (idx: number) => `${tableId}_${idx}`;
@@ -104,10 +110,14 @@ export function SimpleTable({
             {columns.map((col) => {
               const isVisible = columnSettings.find((s) => s.name === col)?.visible ?? true;
               if (!isVisible) return null;
+              const isSorted = sortColumn === col;
               return (
                 <th key={col} className="px-4 py-3 font-semibold text-gray-900 bg-gray-100 cursor-pointer hover:bg-gray-200 border-r">
                   <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">{col}</div>
+                    <div className="flex items-center gap-2 flex-1 cursor-pointer" onClick={() => onColumnSort?.(col)}>
+                      {col}
+                      {isSorted && (sortOrder === "asc" ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+                    </div>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();

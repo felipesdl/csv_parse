@@ -7,6 +7,7 @@ import { useParseCSV } from "@/hooks/useCSVOperations";
 import { useComparisonStore } from "@/store/comparisonStore";
 import { BankSelectorModal } from "@/components/modal/BankSelectorModal";
 import { ValidationError } from "@/types";
+import { BANK_TEMPLATES } from "@/lib/bankTemplates";
 
 interface ComparisonCSVUploaderProps {
   onUploadSuccess?: () => void;
@@ -73,7 +74,7 @@ export function ComparisonCSVUploader({ onUploadSuccess }: ComparisonCSVUploader
           const newFile = {
             id: crypto.randomUUID(),
             bankId,
-            bankName: currentFile.name,
+            bankName: BANK_TEMPLATES[bankId]?.name || bankId,
             uploadDate: new Date().toISOString(),
             rowCount: rows.length,
             data: rows,

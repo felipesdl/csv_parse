@@ -134,7 +134,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
         <p className="text-gray-600 mb-4">📊 Nenhuma coluna "Valor" encontrada para comparação</p>
-        <button onClick={onOpenColumnMapper} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition">
+        <button onClick={onOpenColumnMapper} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition cursor-pointer">
           Configurar Mapeamento de Colunas
         </button>
       </div>
@@ -147,7 +147,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-gray-900">Comparação: Créditos vs Débitos</h3>
-          <button onClick={onOpenColumnMapper} className="text-sm px-3 py-1 text-blue-600 hover:bg-blue-50 rounded transition">
+          <button onClick={onOpenColumnMapper} className="text-sm px-3 py-1 text-blue-600 hover:bg-blue-50 rounded transition cursor-pointer">
             ⚙️ Configurar Colunas
           </button>
         </div>

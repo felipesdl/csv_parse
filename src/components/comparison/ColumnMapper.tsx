@@ -114,7 +114,7 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
                           return next;
                         });
                       }}
-                      className="w-full flex items-center justify-between hover:bg-gray-100 p-2 rounded transition"
+                      className="w-full flex items-center justify-between hover:bg-gray-100 p-2 rounded transition cursor-pointer"
                     >
                       <div className="text-left">
                         <p className="font-medium text-gray-900">{standardName}</p>
@@ -176,10 +176,13 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
 
         {/* Footer */}
         <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6 flex gap-3 justify-end">
-          <button onClick={onClose} className="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium transition">
+          <button onClick={onClose} className="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium transition cursor-pointer">
             Cancelar
           </button>
-          <button onClick={handleSave} className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition">
+          <button
+            onClick={handleSave}
+            className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition cursor-pointer"
+          >
             <Check size={18} />
             Salvar Mapeamento
           </button>

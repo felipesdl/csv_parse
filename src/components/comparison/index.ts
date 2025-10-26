@@ -4,3 +4,4 @@ export { ColumnMapper } from "./ColumnMapper";
 export { TabsComparisonView } from "./TabsComparisonView";
 export { ExtractTablesView } from "./ExtractTablesView";
 export { ConsolidationView } from "./ConsolidationView";
+export { CompleteDataView } from "./CompleteDataView";
