@@ -1,7 +1,11 @@
 "use client";
 
-import { ImporterDashboard } from "@/components";
+import { AppLayout, ImporterDashboard } from "@/components";
 
 export default function Home() {
-  return <ImporterDashboard />;
+  return (
+    <AppLayout>
+      <ImporterDashboard />
+    </AppLayout>
+  );
 }

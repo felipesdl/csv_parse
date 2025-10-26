@@ -8,13 +8,15 @@ import { detectBankFromContent, getTemplateByBank, detectMonthFromData, detectDe
  * O cabeçalho real tem características específicas
  */
 function cleanMetadataLines(content: string, delimiter: string): string {
-  const lines = content.split("\n");
+  const lines = content.split("\n").map((l) => l.trim());
 
   // Palavras-chave que indicam cabeçalho real (coloque as mais prováveis)
   const headerKeywords = ["data", "lançamento", "histórico", "descrição", "valor", "saldo", "referência", "tipo", "transação"];
 
   // Características de um cabeçalho legítimo
   const isRealHeader = (line: string): boolean => {
+    if (!line) return false;
+
     const normalizedLine = line.toLowerCase();
 
     // Deve conter pelo menos 2 das palavras-chave
@@ -30,6 +32,8 @@ function cleanMetadataLines(content: string, delimiter: string): string {
 
   // Características de uma linha de dados
   const isDataLine = (line: string): boolean => {
+    if (!line) return false;
+
     const normalizedLine = line.toLowerCase();
 
     // Deve começar com uma data no formato dd/mm/yyyy ou conter números
@@ -49,35 +53,25 @@ function cleanMetadataLines(content: string, delimiter: string): string {
   };
 
   let headerIndex = -1;
-  let dataIndex = -1;
 
-  // Procurar pelo padrão: HEADER + DADOS
+  // Procurar pela primeira linha que é claramente um header
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (!line) continue; // Pular linhas vazias
+    const line = lines[i];
 
-    // Se encontrou header, procurar por dados após ele
-    if (headerIndex === -1 && isRealHeader(line)) {
+    if (isRealHeader(line)) {
       headerIndex = i;
-      // Procurar por dados após este header
-      for (let j = i + 1; j < lines.length; j++) {
-        const dataLine = lines[j].trim();
-        if (dataLine && isDataLine(dataLine)) {
-          dataIndex = j;
-          break;
-        }
-      }
+      break;
     }
-
-    // Se encontrou header e dados, pode parar
-    if (headerIndex > -1 && dataIndex > -1) break;
   }
 
   // Se encontrou um header válido, retornar do header em diante
   if (headerIndex >= 0) {
-    return lines.slice(headerIndex).join("\n");
+    const result = lines.slice(headerIndex).join("\n");
+    console.log(`[cleanMetadataLines] Removidas ${headerIndex} linhas de metadata. Primeira linha do header: "${lines[headerIndex].substring(0, 80)}..."`);
+    return result;
   }
 
+  console.warn("[cleanMetadataLines] Nenhum header detectado, usando conteúdo original");
   // Se não encontrou, retornar original
   return content;
 }
@@ -137,21 +131,16 @@ export function parseCSV(file: File, delimiter?: string): Promise<{ rows: Parsed
 
 export async function detectAndParseCSV(file: File, forcedBank?: string): Promise<{ rows: ParsedRow[]; columns: string[]; bank: string; month: string }> {
   const fileContent = await file.text();
-  const detectedBank = forcedBank || detectBankFromContent(fileContent) || "generic";
-  let template = getTemplateByBank(detectedBank);
-
-  // Se não foi forçado um banco específico, tentar detectar o delimitador
+  
+  // NÃO fazer detecção automática - sempre requer banco forçado
   if (!forcedBank) {
-    const detectedDelimiter = detectDelimiter(fileContent);
-    // Se o delimitador detectado é diferente, usar o detectado
-    if (detectedDelimiter !== template.delimiter) {
-      console.log(`[detectAndParseCSV] Delimitador detectado: "${detectedDelimiter}" (em vez de "${template.delimiter}")`);
-      template = { ...template, delimiter: detectedDelimiter };
-    }
-  } else {
-    // Se foi forçado um banco, usar o delimitador do template SEMPRE
-    console.log(`[detectAndParseCSV] Banco forçado: "${forcedBank}", usando delimiter: "${template.delimiter}"`);
+    throw new Error("É necessário selecionar o banco manualmente");
   }
+
+  let template = getTemplateByBank(forcedBank);
+
+  // Se foi forçado um banco, usar o delimitador do template
+  console.log(`[detectAndParseCSV] Banco forçado: "${forcedBank}", usando delimiter: "${template.delimiter}"`);
 
   // Limpar linhas de metadados (linhas antes do cabeçalho real)
   const cleanedContent = cleanMetadataLines(fileContent, template.delimiter);
@@ -172,7 +161,7 @@ export async function detectAndParseCSV(file: File, forcedBank?: string): Promis
     }
   }
 
-  return { rows, columns, bank: detectedBank, month };
+  return { rows, columns, bank: forcedBank, month };
 }
 
 export function validateCSV(rows: ParsedRow[], columns: string[], bankTemplate: string): ValidationError[] {
@@ -198,6 +187,32 @@ export function validateCSV(rows: ParsedRow[], columns: string[], bankTemplate: 
       type: "format",
       message: "Nenhuma linha de dados encontrada no arquivo",
     });
+  }
+
+  return errors;
+}
+
+/**
+ * Validação flexível para comparação
+ * Apenas verifica se o arquivo tem dados, sem exigir colunas específicas
+ * Já que os bancos têm estruturas diferentes
+ */
+export function validateCSVForComparison(rows: ParsedRow[], columns: string[]): ValidationError[] {
+  const errors: ValidationError[] = [];
+
+  // Verificar se tem dados
+  if (rows.length === 0) {
+    errors.push({
+      type: "format",
+      message: "Nenhuma linha de dados encontrada no arquivo",
+    });
+  }
+
+  // Verificar se tem coluna "Valor" ou similar para comparação
+  const hasValueColumn = columns.some((col) => col.toLowerCase().includes("valor"));
+  if (!hasValueColumn) {
+    console.warn("[validateCSVForComparison] Aviso: Nenhuma coluna 'Valor' encontrada. Colunas disponíveis:", columns);
+    // Não é erro, apenas aviso - permitir continuar
   }
 
   return errors;

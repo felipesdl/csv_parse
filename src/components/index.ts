@@ -1,5 +1,5 @@
 // Layout components
-export { ImporterDashboard, DataTable, ErrorAlert } from "./layout";
+export { ImporterDashboard, DataTable, ErrorAlert, AppLayout, Sidebar } from "./layout";
 
 // UI components
 export { Button, Input, Select, Badge, Card, InfoGrid } from "./ui";
@@ -25,3 +25,6 @@ export { CSVUploader } from "./upload";
 
 // Formatting components
 export { FormattingPanel } from "./formatting";
+
+// Comparison components
+export { ComparisonPage } from "./comparison";

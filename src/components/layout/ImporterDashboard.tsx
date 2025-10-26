@@ -24,8 +24,8 @@ export function ImporterDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="w-full py-8 px-[16px] h-full overflow-auto">
+      <div className="max-w-full mx-auto space-y-6">
         {/* Header com Upload Button */}
         <div className="flex items-center justify-between mb-8">
           <div>

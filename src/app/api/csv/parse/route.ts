@@ -15,24 +15,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Arquivo deve ser CSV" }, { status: 400 });
     }
 
-    // Processar CSV
-    const { rows, columns, bank, month } = await detectAndParseCSV(file, forcedBank);
+    try {
+      // Processar CSV
+      const { rows, columns, bank, month } = await detectAndParseCSV(file, forcedBank);
 
-    return NextResponse.json(
-      {
-        success: true,
-        data: {
-          rows,
-          columns,
-          bank,
-          month,
-          timestamp: new Date().toISOString(),
+      return NextResponse.json(
+        {
+          success: true,
+          data: {
+            rows,
+            columns,
+            bank,
+            month,
+            timestamp: new Date().toISOString(),
+          },
         },
-      },
-      { status: 200 }
-    );
+        { status: 200 }
+      );
+    } catch (parseError) {
+      const parseMessage = parseError instanceof Error ? parseError.message : "Erro desconhecido ao processar CSV";
+      console.error("Erro ao parsear CSV:", parseError);
+
+      return NextResponse.json(
+        {
+          error: `Erro ao processar arquivo: ${parseMessage}`,
+          details: parseMessage,
+        },
+        { status: 400 }
+      );
+    }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Erro ao processar CSV";
+    const message = error instanceof Error ? error.message : "Erro ao processar requisição";
     console.error("Erro na API /csv/parse:", error);
     return NextResponse.json({ error: message }, { status: 500 });
   }

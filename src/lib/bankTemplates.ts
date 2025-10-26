@@ -58,6 +58,18 @@ export const BANK_TEMPLATES: Record<string, BankTemplate> = {
     descriptionColumn: "Descrição",
     valueColumn: "Valor",
   },
+  onilx: {
+    id: "onilx",
+    name: "OnilX",
+    delimiter: ";",
+    expectedColumns: ["Data", "Descrição", "Valor", "Tipo de transação", "Referência", "Lançamento futuro"],
+    dateColumn: "Data",
+    descriptionColumn: "Descrição",
+    valueColumn: "Valor",
+    typeColumn: "Tipo de transação",
+    referenceColumn: "Referência",
+    futureColumn: "Lançamento futuro",
+  },
 };
 
 export const AUTO_DETECT_KEYWORDS: Record<string, string[]> = {
@@ -66,6 +78,7 @@ export const AUTO_DETECT_KEYWORDS: Record<string, string[]> = {
   itau: ["itaú", "itau", "itau bank"],
   bradesco: ["bradesco", "banco bradesco"],
   santander: ["santander", "banco santander"],
+  onilx: ["onilx", "onil x", "onil exchange"],
 };
 
 export function detectBankFromContent(content: string): string | null {
@@ -105,22 +118,48 @@ export function detectDelimiter(content: string): string {
     }
   }
 
-  if (!headerLine) return ","; // fallback
+  if (!headerLine) {
+    console.warn("[detectDelimiter] Nenhum header encontrado, usando delimitador padrão ','");
+    return ","; // fallback
+  }
+
+  // Se a linha contiver "Data Lançamento", é muito provável que seja Banco Inter com ; como delimitador
+  if (headerLine.toLowerCase().includes("data lançamento")) {
+    console.log("[detectDelimiter] Detectado 'Data Lançamento', usando delimitador ';' (Banco Inter)");
+    return ";";
+  }
 
   // Testar diferentes delimitadores
   const delimiters = [";", ",", "\t", "|"];
-  let bestDelimiter = ",";
-  let maxColumns = 0;
+  const delimiterScores: Record<string, number> = {};
 
   for (const delim of delimiters) {
     const columnCount = (headerLine.match(new RegExp(`\\${delim}`, "g")) || []).length + 1;
-    // Preferir delimitadores que resultem em 3+ colunas
-    if (columnCount >= 3 && columnCount > maxColumns) {
-      maxColumns = columnCount;
+    console.log(`[detectDelimiter] Delimitador "${delim}": ${columnCount} colunas em "${headerLine.substring(0, 60)}..."`);
+
+    // Score basado em número de colunas (preferir 3+)
+    if (columnCount >= 3) {
+      delimiterScores[delim] = columnCount;
+    } else if (columnCount >= 2) {
+      delimiterScores[delim] = columnCount - 0.5; // Penalizar um pouco
+    } else {
+      delimiterScores[delim] = 0;
+    }
+  }
+
+  // Encontrar o delimitador com maior score
+  let bestDelimiter = ",";
+  let maxScore = 0;
+
+  for (const delim of delimiters) {
+    const score = delimiterScores[delim] || 0;
+    if (score > maxScore) {
+      maxScore = score;
       bestDelimiter = delim;
     }
   }
 
+  console.log(`[detectDelimiter] Delimitador escolhido: "${bestDelimiter}" com score ${maxScore}`);
   return bestDelimiter;
 }
 

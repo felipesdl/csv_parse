@@ -3,6 +3,7 @@
 ## 🎯 Objetivo
 
 Permitir que o usuário divida a tabela em duas visualizações separadas:
+
 - **Tabela de Valores Positivos** (Receitas/Entradas)
 - **Tabela de Valores Negativos** (Despesas/Saídas)
 
@@ -20,6 +21,7 @@ Esta funcionalidade mantém a consistência visual e permite uma análise mais c
 ### Resultado
 
 Quando ativado:
+
 - A tabela é dividida em **duas seções**
 - Cada seção tem seu próprio **header visual**
 - Indicadores de cor (🟢 verde para positivos, 🔴 vermelho para negativos)
@@ -54,27 +56,31 @@ Quando ativado:
 ### Componentes Envolvidos
 
 #### 1. **SplitTableView** (`src/components/table/SplitTableView.tsx`)
+
 - Responsável pela **lógica de separação** de dados
 - Detecta automaticamente a coluna de valores
 - Classifica linhas em positivas e negativas
 - Usa algoritmo de parsing de valores brasileiros (1.000,00 format)
 
 **Props:**
+
 ```typescript
 interface SplitTableViewProps {
-  data: ParsedRow[];           // Todos os dados
-  columns: string[];           // Nomes das colunas
-  valueColumn?: string;        // Coluna de valores (auto-detectado)
+  data: ParsedRow[]; // Todos os dados
+  columns: string[]; // Nomes das colunas
+  valueColumn?: string; // Coluna de valores (auto-detectado)
   children: (props) => React.ReactNode; // Render function
 }
 ```
 
 #### 2. **DualTableWrapper** (`src/components/layout/DualTableWrapper.tsx`)
+
 - Componente de **layout** para renderizar duas tabelas
 - Mostra títulos com indicadores de cor
 - Gerencia a disposição visual
 
 **Props:**
+
 ```typescript
 interface DualTableWrapperProps {
   positiveData: ParsedRow[];
@@ -84,11 +90,13 @@ interface DualTableWrapperProps {
 ```
 
 #### 3. **SimpleTable** (`src/components/layout/SimpleTable.tsx`)
+
 - Componente **reutilizável** para renderizar tabelas
 - Suporta modo normal e modo dividido
 - Usa `tableId` para evitar conflito de índices em duas tabelas
 
 **Props:**
+
 ```typescript
 interface SimpleTableProps {
   data: ParsedRow[];
@@ -105,11 +113,13 @@ interface SimpleTableProps {
 ```
 
 #### 4. **FormattingPanel** (Atualizado)
+
 - Adicionada checkbox para ativar/desativar divisão
 - Persiste a preferência no Zustand store
 - Atualiza `formatSettings.splitByPosNeg`
 
 #### 5. **DataTable** (Refatorado)
+
 - Renderiza condicional baseado em `formatSettings.splitByPosNeg`
 - Usa `SplitTableView` quando ativado
 - Usa `SimpleTable` em ambos os casos
