@@ -39,3 +39,87 @@ body {
 .animate-slideIn {
   animation: slideIn 0.3s ease-out;
 }
+
+/* Markdown styling for chat messages */
+.prose {
+  overflow-x: auto;
+}
+
+.prose table {
+  width: 100%;
+  min-width: 500px;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+  font-size: 0.875rem;
+  display: table;
+}
+
+.prose thead {
+  background-color: #f3f4f6;
+  border-bottom: 2px solid #d1d5db;
+}
+
+.prose th {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.prose td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  color: #1f2937;
+  white-space: nowrap;
+}
+
+.prose tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.prose tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+.prose strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.prose h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.5rem;
+}
+
+.prose li {
+  color: #374151;
+}
+
+/* Scrollbar styling for tables */
+.prose::-webkit-scrollbar {
+  height: 8px;
+}
+
+.prose::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.prose::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.prose::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

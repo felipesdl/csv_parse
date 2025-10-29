@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { MessageCircle, X } from "lucide-react";
-import { AIChat } from "./AIChat";
+import { ComparisonAIChat } from "./ComparisonAIChat";
 
-export function FloatingChatButton() {
+export function FloatingComparisonChatButton() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -13,9 +13,9 @@ export function FloatingChatButton() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-lg transition-all duration-300 ${
-          isOpen ? "bg-red-600 hover:bg-red-700" : "bg-purple-600 hover:bg-purple-700 hover:scale-110"
+          isOpen ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700 hover:scale-110"
         }`}
-        title={isOpen ? "Fechar Chat" : "Abrir Chat IA"}
+        title={isOpen ? "Fechar Chat" : "Abrir Chat IA - Comparação"}
       >
         {isOpen ? <X size={28} className="text-white" /> : <MessageCircle size={28} className="text-white" />}
       </button>
@@ -23,7 +23,7 @@ export function FloatingChatButton() {
       {/* Chat Popup */}
       {isOpen && (
         <div className="fixed bottom-24 right-6 z-40 w-[40vw] min-w-[500px] max-w-[800px] h-[600px] max-h-[calc(100vh-8rem)] shadow-2xl rounded-lg overflow-hidden animate-slideIn">
-          <AIChat onClose={() => setIsOpen(false)} />
+          <ComparisonAIChat onClose={() => setIsOpen(false)} />
         </div>
       )}
 

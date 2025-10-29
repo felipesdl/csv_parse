@@ -2,33 +2,31 @@
 
 import { useChat } from "ai/react";
 import type { Message } from "ai/react";
-import { useDataStore } from "@/store/dataStore";
+import { useComparisonStore } from "@/store/comparisonStore";
 import { Send, Sparkles, Loader2, X } from "lucide-react";
 import { Card } from "@/components/ui";
 import { useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-interface AIChatProps {
+interface ComparisonAIChatProps {
   onClose?: () => void;
 }
 
-export function AIChat({ onClose }: AIChatProps = {}) {
-  const { tableData } = useDataStore();
+export function ComparisonAIChat({ onClose }: ComparisonAIChatProps = {}) {
+  const { comparedFiles, commonColumns } = useComparisonStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const hasData = tableData && tableData.rows && tableData.rows.length > 0;
+  const hasData = comparedFiles && comparedFiles.length > 0;
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, error, setInput } = useChat({
-    api: "/api/chat",
-    id: `single-chat-${tableData?.rows?.length || 0}`, // Force re-render when data changes
+    api: "/api/chat/comparison",
+    id: `comparison-chat-${comparedFiles?.length || 0}`, // Force re-render when files change
     body: {
-      tableData: hasData
+      comparisonData: hasData
         ? {
-            bank: tableData.bank,
-            month: tableData.month,
-            rows: tableData.rows,
-            columns: tableData.columns,
+            files: comparedFiles,
+            commonColumns: commonColumns,
           }
         : null,
     },
@@ -39,13 +37,13 @@ export function AIChat({ onClose }: AIChatProps = {}) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Sugestões de perguntas
+  // Sugestões de perguntas para comparação
   const suggestions = [
-    "Quanto gastei este mês?",
-    "Quais são meus 5 maiores gastos?",
-    "Identifique padrões nos meus gastos",
-    "Há transações duplicadas?",
-    "Me dê 3 dicas para economizar",
+    "Compare os gastos totais entre os bancos",
+    "Qual banco teve mais despesas?",
+    "Identifique transações duplicadas entre as contas",
+    "Compare as categorias de gastos",
+    "Mostre diferenças nos padrões de consumo",
   ];
 
   return (
@@ -54,10 +52,14 @@ export function AIChat({ onClose }: AIChatProps = {}) {
       <div className="flex items-center justify-between pb-4 border-b border-gray-200">
         <div className="flex items-center gap-2">
           <Sparkles className="text-purple-600" size={24} />
-          <h3 className="font-semibold text-gray-900">Assistente Financeiro IA</h3>
+          <h3 className="font-semibold text-gray-900">Chat IA - Comparação</h3>
         </div>
         <div className="flex items-center gap-3">
-          {hasData && <div className="text-xs text-gray-500">📊 {tableData.rows.length} transações</div>}
+          {hasData && (
+            <div className="text-xs text-gray-500">
+              🏦 {comparedFiles.length} {comparedFiles.length === 1 ? "arquivo" : "arquivos"}
+            </div>
+          )}
           {onClose && (
             <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded transition" title="Fechar chat">
               <X size={20} className="text-gray-600" />
@@ -71,7 +73,7 @@ export function AIChat({ onClose }: AIChatProps = {}) {
         {/* No data warning */}
         {!hasData && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
-            <p className="text-yellow-800 text-sm">⚠️ Nenhum dado carregado. Faça upload de um arquivo CSV primeiro para usar o chat!</p>
+            <p className="text-yellow-800 text-sm">⚠️ Nenhum arquivo para comparar. Adicione pelo menos um arquivo CSV na página de comparação!</p>
           </div>
         )}
 
@@ -81,29 +83,37 @@ export function AIChat({ onClose }: AIChatProps = {}) {
             <div className="mb-4">
               <Sparkles className="mx-auto text-purple-600" size={48} />
             </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">Olá! Sou seu assistente financeiro 👋</h4>
-            <p className="text-gray-600 mb-6 text-sm">Pergunte qualquer coisa sobre seus dados bancários!</p>
-            <div className="space-y-2 max-w-md mx-auto">
+            <h4 className="text-lg font-semibold text-gray-900 mb-2">Olá! 👋</h4>
+            <p className="text-gray-600 text-sm mb-6">
+              Estou analisando <strong>{comparedFiles.length} arquivo(s)</strong> para comparação.
+              <br />
+              Faça perguntas sobre as diferenças entre eles!
+            </p>
+
+            {/* Suggestions */}
+            <div className="space-y-2">
               <p className="text-xs text-gray-500 font-medium mb-3">💡 Sugestões:</p>
-              {suggestions.map((suggestion, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setInput(suggestion)}
-                  className="block w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm text-gray-700 transition border border-gray-200 hover:border-gray-300"
-                >
-                  {suggestion}
-                </button>
-              ))}
+              <div className="flex flex-col gap-2">
+                {suggestions.map((suggestion, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setInput(suggestion)}
+                    className="text-left px-4 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg text-sm transition"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}
 
-        {/* Messages */}
+        {/* Chat messages */}
         {messages.map((message: Message) => (
           <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
             <div
               className={`max-w-[90%] px-4 py-3 rounded-lg ${
-                message.role === "user" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-900 border border-gray-200"
+                message.role === "user" ? "bg-purple-600 text-white" : "bg-gray-100 border border-gray-200 text-gray-900"
               }`}
             >
               {message.role === "assistant" ? (
@@ -111,25 +121,19 @@ export function AIChat({ onClose }: AIChatProps = {}) {
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
                 </div>
               ) : (
-                <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
               )}
-              <span className={`text-xs mt-2 block ${message.role === "user" ? "text-blue-100" : "text-gray-500"}`}>
-                {new Date(message.createdAt || Date.now()).toLocaleTimeString("pt-BR", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
             </div>
           </div>
         ))}
 
-        {/* Loading indicator */}
+        {/* Loading message */}
         {isLoading && (
           <div className="flex justify-start">
             <div className="bg-gray-100 border border-gray-200 px-4 py-3 rounded-lg">
               <div className="flex items-center gap-2">
                 <Loader2 size={16} className="text-purple-600 animate-spin" />
-                <span className="text-sm text-gray-600">Analisando...</span>
+                <span className="text-sm text-gray-600">Comparando dados...</span>
               </div>
             </div>
           </div>
@@ -158,7 +162,7 @@ export function AIChat({ onClose }: AIChatProps = {}) {
             type="text"
             value={input}
             onChange={handleInputChange}
-            placeholder={hasData ? "Pergunte sobre seus dados..." : "Carregue um CSV primeiro..."}
+            placeholder={hasData ? "Compare os dados dos arquivos..." : "Adicione arquivos primeiro..."}
             className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-900 placeholder:text-gray-500"
             disabled={isLoading || !hasData}
           />
@@ -167,10 +171,10 @@ export function AIChat({ onClose }: AIChatProps = {}) {
             disabled={isLoading || !input.trim() || !hasData}
             className="px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2 font-medium text-sm"
           >
-            {isLoading ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
+            <Send size={18} />
+            Enviar
           </button>
         </form>
-        <p className="text-xs text-gray-500 mt-2 text-center">💡 Powered by OpenAI GPT-4</p>
       </div>
     </Card>
   );

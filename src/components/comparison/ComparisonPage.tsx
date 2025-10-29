@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Plus, Upload, X, AlertCircle, Settings } from "lucide-react";
 import { ComparisonCSVUploader } from "@/components/upload";
 import { Modal, Card } from "@/components";
+import { FloatingComparisonChatButton } from "@/components/chat";
 import { useComparisonStore, type ComparedFile } from "@/store/comparisonStore";
 import { BANK_TEMPLATES } from "@/lib/bankTemplates";
 import { TabsComparisonView } from "./TabsComparisonView";
@@ -148,6 +149,9 @@ export function ComparisonPage() {
 
       {/* Column Mapper */}
       <ColumnMapper isOpen={showColumnMapper} onClose={() => setShowColumnMapper(false)} />
+
+      {/* Floating AI Chat Button for Comparison */}
+      <FloatingComparisonChatButton />
     </div>
   );
 }
