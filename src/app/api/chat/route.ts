@@ -1,5 +1,4 @@
 import { OpenAI } from "openai";
-import { OpenAIStream, StreamingTextResponse } from "ai";
 
 export const runtime = "edge";
 
@@ -60,9 +59,34 @@ ${contextMessage}`,
       ],
     });
 
-    // Converte o stream para o formato adequado
-    const stream = OpenAIStream(response as any);
-    return new StreamingTextResponse(stream);
+    // Converte o stream do OpenAI para o formato Server-Sent Events (SSE)
+    const stream = new ReadableStream({
+      async start(controller) {
+        const encoder = new TextEncoder();
+        try {
+          for await (const chunk of response) {
+            const content = chunk.choices[0]?.delta?.content || "";
+            if (content) {
+              // Formato SSE esperado pelo useChat do AI SDK
+              const data = `0:"${content.replace(/"/g, '\\"').replace(/\n/g, "\\n")}"\n`;
+              controller.enqueue(encoder.encode(data));
+            }
+          }
+        } catch (error) {
+          controller.error(error);
+        } finally {
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+      },
+    });
   } catch (error) {
     console.error("Chat API Error:", error);
     return new Response(
