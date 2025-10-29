@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Plus, Upload, X, AlertCircle, Settings } from "lucide-react";
 import { ComparisonCSVUploader } from "@/components/upload";
-import { Modal } from "@/components/modal";
+import { Modal, Card } from "@/components";
 import { useComparisonStore, type ComparedFile } from "@/store/comparisonStore";
 import { BANK_TEMPLATES } from "@/lib/bankTemplates";
 import { TabsComparisonView } from "./TabsComparisonView";
@@ -64,7 +64,7 @@ export function ComparisonPage() {
             {/* Files Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {comparedFiles.map((file: ComparedFile) => (
-                <div key={file.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+                <Card key={file.id} className="hover:shadow-md transition">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
@@ -90,7 +90,7 @@ export function ComparisonPage() {
                       <p className="text-xs text-gray-600 line-clamp-2">{file.columns.join(", ")}</p>
                     </div>
                   </div>
-                </div>
+                </Card>
               ))}
 
               {/* Add New File Card */}
@@ -104,7 +104,7 @@ export function ComparisonPage() {
             </div>
           </div>
         ) : (
-          <div className="bg-white p-16 rounded-lg shadow-sm border border-gray-200 text-center">
+          <Card className="text-center" padding="lg">
             <p className="text-gray-900 mb-4 text-lg">Nenhum arquivo adicionado</p>
             <p className="text-sm text-gray-600 mb-6">Importe arquivos de diferentes bancos para começar a comparação</p>
             <button
@@ -114,7 +114,7 @@ export function ComparisonPage() {
               <Upload size={20} />
               Selecionar Arquivo
             </button>
-          </div>
+          </Card>
         )}
 
         {/* Comparison Charts Section */}

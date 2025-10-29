@@ -1,244 +1,432 @@
-# ☕ Café Dashboard# Café Dashboard - Importador de CSV Bancário# 🏗️ Café Dashboard - Importador de CSV Bancário# 🏗️ Café Dashboard - Importador de CSV Bancário# 🏗️ Café Dashboard - Importador de CSV BancárioThis is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ☕ Café Dashboard - Importador de CSV Bancário# ☕ Café Dashboard# Café Dashboard - Importador de CSV Bancário# 🏗️ Café Dashboard - Importador de CSV Bancário# 🏗️ Café Dashboard - Importador de CSV Bancário# 🏗️ Café Dashboard - Importador de CSV BancárioThis is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-**Ferramenta poderosa para análise e comparação de extratos bancários em formato CSV.**Dashboard moderno com cache inteligente, filtros avançados, offline support e zero memory leaks.
+**Ferramenta poderosa para análise e comparação de extratos bancários em formato CSV.\*\***Ferramenta poderosa para análise e comparação de extratos bancários em formato CSV.\*\*Dashboard moderno com cache inteligente, filtros avançados, offline support e zero memory leaks.
 
----## Características Principais> Dashboard moderno com cache inteligente, filtros avançados, offline support e zero memory leaksUm dashboard moderno e intuitivo para importação, manipulação e exportação de dados bancários em formato CSV com **filtros avançados por coluna** (v0.2.0).Um dashboard moderno e intuitivo para importação, manipulação e exportação de dados bancários em formato CSV.## Getting Started
+Dashboard moderno com cache inteligente, filtros avançados, suporte offline e zero memory leaks.---## Características Principais> Dashboard moderno com cache inteligente, filtros avançados, offline support e zero memory leaksUm dashboard moderno e intuitivo para importação, manipulação e exportação de dados bancários em formato CSV com **filtros avançados por coluna** (v0.2.0).Um dashboard moderno e intuitivo para importação, manipulação e exportação de dados bancários em formato CSV.## Getting Started
 
-## 🚀 Começar Rápido### Upload Inteligente
+---## 🚀 Começar Rápido### Upload Inteligente
 
-### Instalação- Detecção automática de banco (Caixa, Itaú, Bradesco, Santander, Banco Inter)
+## 🚀 Começar Rápido### Instalação- Detecção automática de banco (Caixa, Itaú, Bradesco, Santander, Banco Inter)
 
-```bash- Suporte a drag & drop e clique## ✨ Características Principais## 🌟 Características Principais## 🌟 Características PrincipaisFirst, run the development server:
+### Instalação```bash- Suporte a drag & drop e clique## ✨ Características Principais## 🌟 Características Principais## 🌟 Características PrincipaisFirst, run the development server:
+
+`````bashnpm install
 
 npm install
 
-npm run dev- Seleção manual com fallback automático
+```npm run dev- Seleção manual com fallback automático
 
-```
 
-- Detecção automática de mês/ano
 
-Abra [http://localhost:3000](http://localhost:3000)
+### Desenvolvimento```
 
-- Validação e limpeza de metadados
 
-### Build para Produção
 
-### 📤 Upload Inteligente### ✨ Upload Inteligente### ✨ Upload Inteligente```bash
+```bash- Detecção automática de mês/ano
 
-````bash
+npm run dev
+
+```Abra [http://localhost:3000](http://localhost:3000)
+
+
+
+Abra [http://localhost:3000](http://localhost:3000) no navegador.- Validação e limpeza de metadados
+
+
+
+### Build para Produção### Build para Produção
+
+
+
+```bash### 📤 Upload Inteligente### ✨ Upload Inteligente### ✨ Upload Inteligente```bash
+
+npm run build
+
+npm start````bash
+
+`````
 
 npm run build### Tabela Interativa
 
+---
+
 npm start
 
-```- Ordenação por qualquer coluna- 🎯 **Detecção automática de banco**: Caixa, Itaú, Bradesco, Santander, Banco Inter
+## ✨ Características Principais
+
+````- Ordenação por qualquer coluna- 🎯 **Detecção automática de banco**: Caixa, Itaú, Bradesco, Santander, Banco Inter
+
+### 📤 Upload Inteligente
 
 
 
----- Filtro global em tempo real
+- 🎯 **Detecção automática de banco**: Caixa, Inter, Itaú, Bradesco, Santander, OnilX
 
+- 📤 **Suporte a drag & drop** e clique para selecionar arquivo---- Filtro global em tempo real
 
+- 🏦 **Seleção manual** com fallback automático
+
+- 📅 **Detecção automática de mês/ano** do extrato
+
+- ✅ **Validação e limpeza** de metadados
 
 ## 📚 Documentação- Filtros avançados por coluna (texto, número, seleção múltipla)- 📤 Suporte a drag & drop e clique- 🎯 Detecção automática de banco (Caixa, Itaú, Bradesco, Santander)- 🎯 Detecção automática de banco (Caixa, Itaú, Bradesco, Santander)npm run dev
 
-
-
-Este projeto tem **2 documentos principais** que cobrem tudo:- Mostrar/ocultar colunas
-
-
-
-### 👨‍💻 [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md)- Deletar linhas individuais ou em lote- 🏦 Seleção manual com fallback automático
-
-**Para Desenvolvedores**
-
-- Detecção automática de duplicatas
-
-Documentação técnica completa com:
-
-- 🏗️ Arquitetura do sistema  - 📅 Detecção automática de mês/ano- 📤 Suporte a drag & drop e clique
-
-- 📦 Stack tecnológico completo
-
-- 📁 Estrutura de arquivos organizada### Export & Persistência
-
-- 🔄 State management (Zustand + TanStack Query)
-
-- 📊 Data flows e APIs- Copiar para clipboard (sem headers)- ✅ Validação e limpeza de metadados
-
-- 📝 Tipos & Interfaces
-
-- 🛠️ Guia de desenvolvimento- Exportar como CSV (download)
+### 📊 Tabela Interativa
 
 
 
-### 👤 [USER_GUIDE.md](./USER_GUIDE.md)- Persistência em localStorage (5 min)- 🏦 Seleção manual de banco com fallback- 📤 Suporte a drag & drop e clique# or
+- ⬆️⬇️ **Ordenação** por qualquer coluna (clique no header)
 
-**Para Usuários Finais**
+- 🔍 **Filtro global** em tempo real (busca em todas colunas)Este projeto tem **2 documentos principais** que cobrem tudo:- Mostrar/ocultar colunas
 
-- Cache inteligente com TanStack Query
+- 🎛️ **Filtros avançados** por coluna:
 
-Guia completo do usuário com:
+  - Texto (contém, começa com, termina com)
 
-- 🎯 Primeiros passos- Sincronização automática entre abas### 📊 Tabela Interativa
+  - Número (igual, maior que, menor que)
 
-- 📤 Upload de arquivos
+  - Seleção múltipla (in/not in)### 👨‍💻 [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md)- Deletar linhas individuais ou em lote- 🏦 Seleção manual com fallback automático
 
-- 📊 Comparação de bancos### Performance- ⬆️⬇️ Ordenação por qualquer coluna- 📅 Detecção automática de mês/ano
+- 👁️ **Mostrar/ocultar colunas** individualmente
 
-- 📈 Análises e gráficos
+- ✅ **Seleção de linhas** (checkbox) para operações em lote**Para Desenvolvedores**
 
-- 💾 Exportação de dados- 40x mais rápido que versão anterior
+- 🗑️ **Deletar linhas** individuais ou múltiplas
 
-- 💡 Dicas e truques
-
-- ❓ FAQ e troubleshooting- Cache hit: <50ms- 🔍 Filtro global em tempo real
+- 🔴 **Detecção automática de duplicatas** (linha marcada em vermelho)- Detecção automática de duplicatas
 
 
 
----- Zero memory leaks
+### 🎨 Formatação CustomizávelDocumentação técnica completa com:
 
 
 
-## ✨ Características Principais- Simple HTML table (sem overhead)- 🎯 **Filtros avançados**: texto, número, seleção múltipla- 🏦 Seleção manual de banco com fallbackyarn dev
+- 📅 **Formato de data**:- 🏗️ Arquitetura do sistema  - 📅 Detecção automática de mês/ano- 📤 Suporte a drag & drop e clique
+
+  - Data Completa: `15/09/2025 23:59`
+
+  - Data + Hora: `15/09/2025`- 📦 Stack tecnológico completo
+
+  - Apenas o Dia: `15`
+
+- 💵 **Valores negativos**:- 📁 Estrutura de arquivos organizada### Export & Persistência
+
+  - Mostrar como positivos (toggle)
+
+  - Dividir tabela em positivos/negativos (2 tabelas lado a lado)- 🔄 State management (Zustand + TanStack Query)
 
 
 
-✅ **Múltiplos Bancos** - Caixa, Inter, Itaú, Bradesco, Santander, OnilX  ## Quick Start- 👁️ Mostrar/ocultar colunas
+### 💾 Export & Persistência- 📊 Data flows e APIs- Copiar para clipboard (sem headers)- ✅ Validação e limpeza de metadados
 
-✅ **Upload Flexível** - Drag & drop com seleção manual de banco
 
-✅ **Tabela Poderosa** - Sorting, filtros, busca global, visibilidade  ```bash- 🗑️ Deletar linhas individuais ou em lote### 📊 Tabela Interativa Poderosa
 
-✅ **Comparação** - Compare múltiplos bancos lado-a-lado
+- 📋 **Copiar para clipboard** (formato Excel, sem headers)- 📝 Tipos & Interfaces
 
-✅ **Gráficos** - Créditos vs Débitos com análises  npm install
+- 📥 **Exportar como CSV** (download automático)
 
-✅ **Exportação** - Copiar para clipboard ou salvar CSV
+- 💾 **Persistência automática** em localStorage (5 minutos)- 🛠️ Guia de desenvolvimento- Exportar como CSV (download)
+
+- 🔄 **Sincronização** entre abas do navegador
+
+- ⚡ **Cache inteligente** com TanStack Query
+
+
+
+### 📊 Comparação de Extratos (Módulo Comparison)### 👤 [USER_GUIDE.md](./USER_GUIDE.md)- Persistência em localStorage (5 min)- 🏦 Seleção manual de banco com fallback- 📤 Suporte a drag & drop e clique# or
+
+
+
+- 📤 **Upload de múltiplos arquivos** (até 10 bancos simultaneamente)**Para Usuários Finais**
+
+- 🏦 **Seleção de banco** obrigatória para cada arquivo
+
+- 📋 **Mapeamento de colunas** (renomear colunas diferentes para comparação)- Cache inteligente com TanStack Query
+
+- 📈 **Gráficos comparativos**:
+
+  - Créditos vs Débitos por bancoGuia completo do usuário com:
+
+  - Distribuição de valores
+
+  - Total consolidado- 🎯 Primeiros passos- Sincronização automática entre abas### 📊 Tabela Interativa
+
+- 📑 **Tabelas detalhadas** com todos os dados
+
+- 💰 **Resumo consolidado** de todos os bancos- 📤 Upload de arquivos
+
+
+
+---- 📊 Comparação de bancos### Performance- ⬆️⬇️ Ordenação por qualquer coluna- 📅 Detecção automática de mês/ano
+
+
+
+## 🏦 Bancos Suportados- 📈 Análises e gráficos
+
+
+
+| Banco           | ID          | Delimitador | Estrutura CSV                                                            |- 💾 Exportação de dados- 40x mais rápido que versão anterior
+
+| --------------- | ----------- | ----------- | ------------------------------------------------------------------------ |
+
+| Caixa Econômica | `caixa`     | `;`         | Data, Descrição, Valor, Tipo de transação, Referência, Lançamento futuro |- 💡 Dicas e truques
+
+| Banco Inter     | `inter`     | `;`         | Data Lançamento, Histórico, Descrição, Valor, Saldo                      |
+
+| Itaú            | `itau`      | `;`         | Data, Lançamento, Razão Social, CPF/CNPJ, Valor (R$), Saldo (R$)        |- ❓ FAQ e troubleshooting- Cache hit: <50ms- 🔍 Filtro global em tempo real
+
+| Bradesco        | `bradesco`  | `,`         | Data, Descrição, Valor                                                   |
+
+| Santander       | `santander` | `,`         | Data, Descrição, Valor                                                   |
+
+| OnilX           | `onilx`     | `;`         | Data, Descrição, Valor, Tipo de transação, Referência, Lançamento futuro |
+
+| Genérico        | `generic`   | `,`         | (flexível, adaptável)                                                    |---- Zero memory leaks
+
+
+
+### ⚠️ Observações Importantes
+
+
+
+**Banco Itaú:**## ✨ Características Principais- Simple HTML table (sem overhead)- 🎯 **Filtros avançados**: texto, número, seleção múltipla- 🏦 Seleção manual de banco com fallbackyarn dev
+
+- CSV possui 10 linhas de metadados antes do header
+
+- Header identificado por palavras-chave: "data", "lançamento", "razão social"
+
+- Linhas com "SALDO ANTERIOR", "SALDO TOTAL", etc. são automaticamente filtradas
+
+- Delimitador: ponto-e-vírgula (`;`)✅ **Múltiplos Bancos** - Caixa, Inter, Itaú, Bradesco, Santander, OnilX  ## Quick Start- 👁️ Mostrar/ocultar colunas
+
+
+
+---✅ **Upload Flexível** - Drag & drop com seleção manual de banco
+
+
+
+## 🎯 Como Usar✅ **Tabela Poderosa** - Sorting, filtros, busca global, visibilidade  ```bash- 🗑️ Deletar linhas individuais ou em lote### 📊 Tabela Interativa Poderosa
+
+
+
+### 1. Upload de Arquivo✅ **Comparação** - Compare múltiplos bancos lado-a-lado
+
+
+
+1. Clique no botão **"Selecionar Arquivo"** ou arraste um CSV✅ **Gráficos** - Créditos vs Débitos com análises  npm install
+
+2. Selecione o banco (detecção automática com confirmação)
+
+3. Aguarde o processamento e validação✅ **Exportação** - Copiar para clipboard ou salvar CSV
+
+4. Dados aparecem na tabela interativa
 
 ✅ **Formatação** - Customize datas e valores  npm run dev- 🚨 Detecção automática de duplicatas
 
+### 2. Filtrar e Ordenar
+
 ✅ **Performance** - Cache inteligente, 40x mais rápido
 
-✅ **Persistência** - localStorage mantém dados entre sessões  ```
+- **Filtro Global**: Digite na barra de busca no topo
+
+- **Ordenar**: Clique no header da coluna (▲ crescente / ▼ decrescente)✅ **Persistência** - localStorage mantém dados entre sessões  ```
+
+- **Filtros Avançados**: Clique no botão "Filtros Avançados" e configure por coluna
 
 
+
+### 3. Selecionar e Deletar
 
 ---- 📅 Detecção automática de mês/ano# or
 
+- **Selecionar**: Marque o checkbox na linha desejada
 
+- **Deletar Selecionadas**: Clique no botão vermelho "🗑️"
+
+- **Deletar Individual**: Marque apenas uma linha e delete
 
 ## 🏗️ Stack TecnológicoAbra http://localhost:3000
 
+### 4. Exportar Dados
 
 
-- **Next.js 15** - Framework React com SSR e API### 💾 Export & Persistência
 
-- **React 18** - Biblioteca UI
+- **Copiar**: Clique em "📋 Copiar" (formato Excel, cola direto)
 
-- **TypeScript 5.6** - Tipagem estática## Documentação
+- **CSV**: Clique em "📥 Exportar CSV" (download automático)- **Next.js 15** - Framework React com SSR e API### 💾 Export & Persistência
 
-- **Tailwind CSS 4** - Estilos utilitários
 
-- **Zustand 5** - State management- 📋 **Copiar para clipboard** (sem headers)- ⬆️⬇️ Ordenação por qualquer coluna
 
-- **TanStack Query 5** - Cache & sincronização
+### 5. Comparar Bancos- **React 18** - Biblioteca UI
 
-- **Recharts 3.3** - Gráficos e visualizações- **INDEX.md** - Índice de navegação (comece aqui!)
 
-- **PapaParse 5.5** - Parsing de CSV
 
-- **README_TANSTACK.md** - Overview do TanStack Query- 📥 **Exportar como CSV** (download)
+1. Vá para a página **"Comparação"** no menu lateral- **TypeScript 5.6** - Tipagem estática## Documentação
 
----
+2. Clique em **"+ Adicionar Arquivo"**
 
-- **SETUP_GUIDE.md** - Instalação passo-a-passo
+3. Faça upload de múltiplos extratos (diferentes bancos/períodos)- **Tailwind CSS 4** - Estilos utilitários
 
-## 📁 Estrutura
+4. Configure o **mapeamento de colunas** se necessário
 
-- **TESTING.md** - 6 testes + debugging- 💿 **Persistência em localStorage** (5 min)- 🔍 Filtro global em tempo realpnpm dev
+5. Visualize os gráficos comparativos e tabelas consolidadas- **Zustand 5** - State management- 📋 **Copiar para clipboard** (sem headers)- ⬆️⬇️ Ordenação por qualquer coluna
+
+
+
+---- **TanStack Query 5** - Cache & sincronização
+
+
+
+## 🔧 Stack Tecnológico- **Recharts 3.3** - Gráficos e visualizações- **INDEX.md** - Índice de navegação (comece aqui!)
+
+
+
+| Tecnologia         | Versão  | Propósito                          |- **PapaParse 5.5** - Parsing de CSV
+
+| ------------------ | ------- | ---------------------------------- |
+
+| **Next.js**        | 15.0.0  | Framework React com SSR e API      |- **README_TANSTACK.md** - Overview do TanStack Query- 📥 **Exportar como CSV** (download)
+
+| **React**          | 18.3.1  | Biblioteca UI                      |
+
+| **TypeScript**     | 5.6.3   | Tipagem estática                   |---
+
+| **Tailwind CSS**   | 4       | Estilos utilitários                |
+
+| **Zustand**        | 5.0.8   | State management global            |- **SETUP_GUIDE.md** - Instalação passo-a-passo
+
+| **TanStack Query** | 5.32.1  | Cache & sincronização servidor     |
+
+| **Recharts**       | 3.3.0   | Gráficos e visualizações           |## 📁 Estrutura
+
+| **PapaParse**      | 5.5.3   | Parsing de CSV                     |
+
+| **Lucide React**   | 0.548.0 | Ícones SVG                         |- **TESTING.md** - 6 testes + debugging- 💿 **Persistência em localStorage** (5 min)- 🔍 Filtro global em tempo realpnpm dev
+
+| **Sonner**         | 1.7.3   | Toast notifications                |
 
 ````
+
+---
 
 src/- **ARCHITECTURE.md** - Design técnico
 
+## 📈 Performance
+
 ├── app/ # Next.js App Router
 
-├── components/ # React Components- **EXAMPLES.md** - Exemplos práticos- ⚡ **Cache inteligente** com TanStack Query
+- ⚡ **40x mais rápido** que versão anterior
 
-├── hooks/ # Custom Hooks
+- 💾 **Cache hit**: <50ms (TanStack Query)├── components/ # React Components- **EXAMPLES.md** - Exemplos práticos- ⚡ **Cache inteligente** com TanStack Query
+
+- 🧹 **Zero memory leaks** (cleanup automático)
+
+- 📱 **Responsivo** (mobile, tablet, desktop)├── hooks/ # Custom Hooks
+
+- 🔄 **Offline support** (localStorage sync)
 
 ├── lib/ # Business Logic## Stack- 🔄 Sincronização automática entre abas- 🎯 **Filtros avançados por coluna (NOVO!)**
 
+---
+
 ├── store/ # Zustand Stores
+
+## 💡 Dicas & Truques
 
 ├── types/ # TypeScript Types- Next.js 15.0.0
 
+### Atalhos de Teclado
+
 ├── utils/ # Utilitários
 
-└── providers/ # Providers- React 18.3.1
+- `Ctrl/Cmd + A` na tabela: Seleciona todas as linhas visíveis
 
-````
+- `Delete` com linhas selecionadas: Deleta múltiplas linhas└── providers/ # Providers- React 18.3.1
 
-- TanStack Query 5.32.1### ⚡ Performance - 📝 Filtro de texto (busca por substring)### 📊 Tabela Interativa Poderosa# or
+### Filtros Avançados````
 
----
+**Exemplo prático:**- TanStack Query 5.32.1### ⚡ Performance - 📝 Filtro de texto (busca por substring)### 📊 Tabela Interativa Poderosa# or
+
+1. Filtro coluna "Valor": `maior que 1000`
+
+2. Filtro coluna "Descrição": `contém PIX`---
+
+3. Resultado: Apenas transações PIX acima de R$ 1.000
 
 - Zustand 5.0.8
 
+### Comparação de Bancos
+
 ## 🎯 Bancos Suportados
 
-- TypeScript 5.6.3- 🚀 **+40x mais rápido** que versão anterior
+**Cenário:**
 
-| Banco | ID | Delimitador |
+- Você tem extratos de Caixa, Inter e Itaú do mesmo mês- TypeScript 5.6.3- 🚀 **+40x mais rápido** que versão anterior
 
-|-------|----|----|- Tailwind CSS 4
+- As colunas têm nomes diferentes ("Data" vs "Data Lançamento")
 
-| Caixa Econômica | `caixa` | `;` |
+- Use o **Mapeamento de Colunas** para padronizar| Banco | ID | Delimitador |
 
-| Banco Inter | `inter` | `;` |- PapaParse 5.5.3- ⏱️ Cache hit: <50ms - 🔢 Filtro numérico (valor exato)
+---|-------|----|----|- Tailwind CSS 4
 
-| Itaú | `itau` | `,` |
+## ❓ FAQ & Troubleshooting| Caixa Econômica | `caixa` | `;` |
+
+### Erro: "Nenhuma coluna comum encontrada"| Banco Inter | `inter` | `;` |- PapaParse 5.5.3- ⏱️ Cache hit: <50ms - 🔢 Filtro numérico (valor exato)
+
+**Causa:** Os arquivos têm estruturas muito diferentes | Itaú | `itau` | `,` |
+
+**Solução:** Use o mapeador de colunas para renomear e alinhar
 
 | Bradesco | `bradesco` | `,` |## Status- 💾 Zero memory leaks
 
+### Dados não persistem entre sessões
+
 | Santander | `santander` | `,` |
 
-| OnilX | `onilx` | `;` |✅ Production Ready - v1.0 (TanStack Query)- 🔧 Simple HTML table (sem overhead de framework) - ✓ Filtro seleção (múltiplos valores)- ⬆️⬇️ Ordenação por qualquer colunabun dev
+**Causa:** localStorage desabilitado ou cheio
 
-| Genérico | `generic` | `,` |
+**Solução:** Verifique configurações do navegador ou limpe cache| OnilX | `onilx` | `;` |✅ Production Ready - v1.0 (TanStack Query)- 🔧 Simple HTML table (sem overhead de framework) - ✓ Filtro seleção (múltiplos valores)- ⬆️⬇️ Ordenação por qualquer colunabun dev
 
-**Data**: 25 de Outubro de 2025
+### CSV não detecta o banco corretamente| Genérico | `generic` | `,` |
+
+**Causa:** Formato não padrão ou banco não suportado **Data**: 25 de Outubro de 2025
+
+**Solução:** Selecione manualmente o banco no modal de upload
 
 ---
 
+### Arquivo muito grande (>10MB)
+
 --- - 🚀 Detecção automática de tipo de coluna
 
-## 🧪 Validação
+**Causa:** Limitação de memória do navegador
 
-## 🚀 Quick Start- ✅ Seleção múltipla de linhas- 🔍 Filtro global em tempo real```
+**Solução:** Divida o arquivo ou use filtros para reduzir dados## 🧪 Validação
 
-```bash
+---## 🚀 Quick Start- ✅ Seleção múltipla de linhas- 🔍 Filtro global em tempo real```
 
-npm run build   # Deve compilar sem erros```bash- 👁️ Mostrar/ocultar colunas
+## 📚 Documentação Técnica```bash
 
-npm run dev     # Deve rodar sem warnings
+Para informações detalhadas sobre arquitetura, desenvolvimento e manutenção, consulte:npm run build # Deve compilar sem erros```bash- 👁️ Mostrar/ocultar colunas
 
-```# 1. Instalar dependências
+👉 **[SYSTEM_DOCS.md](./SYSTEM_DOCS.md)** - Documentação completa para desenvolvedoresnpm run dev # Deve rodar sem warnings
 
+---```# 1. Instalar dependências
 
+## 📄 Licença
 
----npm install- 🚨 Detecção automática de duplicatas- ✅ Seleção múltipla de linhas
+Proprietary - Todos os direitos reservados---npm install- 🚨 Detecção automática de duplicatas- ✅ Seleção múltipla de linhas
 
+---
 
+## 🤝 Contribuições## 📞 Support
 
-## 📞 Support
+Para relatar bugs ou sugerir melhorias, entre em contato com a equipe de desenvolvimento.
 
+---- **Usuário:** Veja [USER_GUIDE.md#troubleshooting](./USER_GUIDE.md#troubleshooting)# 2. Iniciar servidor- 🗑️ Deletar linhas individuais ou em lote
 
-
-- **Usuário:** Veja [USER_GUIDE.md#troubleshooting](./USER_GUIDE.md#troubleshooting)# 2. Iniciar servidor- 🗑️ Deletar linhas individuais ou em lote
-
-- **Desenvolvedor:** Veja [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md)
+**Desenvolvido com ☕ e ❤️**- **Desenvolvedor:** Veja [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md)
 
 npm run dev
 
@@ -252,11 +440,9 @@ npm run dev
 
 open http://localhost:3000### 💾 Persistência
 
-
-
 # 4. Fazer upload de um CSV bancário- 🚨 Detecção automática de duplicatas
 
-````
+`````
 
 - 💿 Salvamento em localStorage
 
@@ -620,7 +806,7 @@ Caso 3: Combinação# Teste com duplicatas
 
 → Ativar ambos os filtros simultaneamenteteste_caixa_com_duplicatas.csv
 
-````
+`````
 
 # Arquivo real do banco (100+ linhas)
 

@@ -6,6 +6,7 @@ import { useComparisonStore } from "@/store/comparisonStore";
 import { BANK_TEMPLATES } from "@/lib/bankTemplates";
 import { parseValueBR, COLORS_GENERIC, COLORS_CREDIT, COLORS_DEBIT } from "@/utils";
 import { formatBankReference } from "@/utils/referenceFormatter";
+import { Card } from "@/components/ui";
 
 interface ComparativeAnalysisProps {
   onOpenColumnMapper: () => void;
@@ -133,19 +134,19 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
 
   if (!analysisData || !analysisData.hasData) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+      <Card className="text-center" padding="lg">
         <p className="text-gray-600 mb-4">📊 Nenhuma coluna "Valor" encontrada para comparação</p>
         <button onClick={onOpenColumnMapper} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition cursor-pointer">
           Configurar Mapeamento de Colunas
         </button>
-      </div>
+      </Card>
     );
   }
 
   return (
     <div className="space-y-6">
       {/* Comparação Créditos vs Débitos */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <Card>
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-gray-900">Comparação: Créditos vs Débitos</h3>
           <button onClick={onOpenColumnMapper} className="text-sm px-3 py-1 text-blue-600 hover:bg-blue-50 rounded transition cursor-pointer">
@@ -167,10 +168,10 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
             <Bar dataKey="Débitos" fill="#ef4444" />
           </BarChart>
         </ResponsiveContainer>
-      </div>
+      </Card>
 
       {/* Distribuição de Créditos e Débitos */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <Card>
         <h3 className="text-lg font-semibold text-gray-900 mb-6">Distribuição por Banco</h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Pie Chart - Créditos */}
@@ -221,10 +222,10 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
             </ResponsiveContainer>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Tabela Detalhada - Créditos */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <Card>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">📈 Análise de Créditos</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -253,10 +254,10 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
 
       {/* Tabela Detalhada - Débitos */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <Card>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">📉 Análise de Débitos</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -285,10 +286,10 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
 
       {/* Resumo Consolidado */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <Card>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">💰 Resumo Consolidado</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -325,7 +326,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
