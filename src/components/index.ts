@@ -29,5 +29,8 @@ export { FormattingPanel } from "./formatting";
 // Comparison components
 export { ComparisonPage } from "./comparison";
 
+// Chat components
+export { AIChat, FloatingChatButton } from "./chat";
+
 // Error handling
 export { ErrorBoundary } from "./ErrorBoundary";

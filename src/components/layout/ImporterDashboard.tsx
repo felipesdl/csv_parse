@@ -8,6 +8,7 @@ import { Modal } from "../modal";
 import { useDataStore } from "@/store/dataStore";
 import { DataTable } from "./DataTable";
 import { useToast } from "@/hooks/useToast";
+import { FloatingChatButton } from "../chat";
 
 export function ImporterDashboard() {
   const { tableData, error, setError, reset, saveToLocalStorage, loadFromLocalStorage } = useDataStore();
@@ -119,6 +120,9 @@ export function ImporterDashboard() {
           <CSVUploader onUploadSuccess={() => setShowUploadModal(false)} />
         </div>
       </Modal>
+
+      {/* Floating Chat Button */}
+      <FloatingChatButton />
     </div>
   );
 }
