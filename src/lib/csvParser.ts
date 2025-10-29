@@ -10,8 +10,20 @@ import { logger } from "@/utils/logger";
  * Estratégia: encontrar a primeira linha que parece ser o cabeçalho
  * O cabeçalho real tem características específicas
  */
-function cleanMetadataLines(content: string, delimiter: string): string {
+function cleanMetadataLines(content: string, delimiter: string, bankId?: string): string {
   const lines = content.split("\n").map((l) => l.trim());
+
+  // Tratamento específico para Itaú: pular até encontrar linha "Data;Lançamento;Razão Social..."
+  if (bankId === "itau") {
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].toLowerCase();
+      // Procurar pela linha que contém exatamente essas 3 palavras-chave juntas
+      if (line.includes("data") && line.includes("lançamento") && line.includes("razão social")) {
+        console.log(`[cleanMetadataLines] Itaú: Header encontrado na linha ${i}`);
+        return lines.slice(i).join("\n");
+      }
+    }
+  }
 
   // Palavras-chave que indicam cabeçalho real (coloque as mais prováveis)
   const headerKeywords = HEADER_KEYWORDS;
@@ -147,7 +159,7 @@ export async function detectAndParseCSV(file: File, forcedBank?: string): Promis
     contentToParse = lines.slice(template.skipHeaderRows).join("\n");
   } else {
     // Fallback para detecção automática se skipHeaderRows não definido
-    contentToParse = cleanMetadataLines(fileContent, template.delimiter);
+    contentToParse = cleanMetadataLines(fileContent, template.delimiter, forcedBank);
   }
 
   // Fazer parsing do conteúdo limpo
@@ -158,6 +170,10 @@ export async function detectAndParseCSV(file: File, forcedBank?: string): Promis
     // Ignorar linhas que parecem ser TOTAL
     const descriptionValue = String(row[template.descriptionColumn] || "").toLowerCase();
     if (descriptionValue.includes("total")) {
+      return false;
+    }
+    // Ignorar linhas de saldo do Itaú (SALDO ANTERIOR, SALDO TOTAL DISPONÍVEL DIA, SALDO EM CONTA CORRENTE)
+    if (descriptionValue.includes("saldo")) {
       return false;
     }
     // Ignorar linhas completamente vazias

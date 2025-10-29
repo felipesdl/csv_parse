@@ -16,7 +16,7 @@ export const BANK_TEMPLATES: Record<string, BankTemplate> = {
   },
   inter: {
     id: "inter",
-    name: "Banco Inter",
+    name: "Inter",
     delimiter: ";",
     expectedColumns: ["Data Lançamento", "Histórico", "Descrição", "Valor", "Saldo"],
     dateColumn: "Data Lançamento",
@@ -26,11 +26,12 @@ export const BANK_TEMPLATES: Record<string, BankTemplate> = {
   itau: {
     id: "itau",
     name: "Itaú",
-    delimiter: ",",
-    expectedColumns: ["Data", "Descrição", "Valor"],
+    delimiter: ";",
+    expectedColumns: ["Data", "Lançamento", "Razão Social", "CPF/CNPJ", "Valor (R$)", "Saldo (R$)"],
     dateColumn: "Data",
-    descriptionColumn: "Descrição",
-    valueColumn: "Valor",
+    descriptionColumn: "Lançamento",
+    valueColumn: "Valor (R$)",
+    skipHeaderRows: 0, // A função cleanMetadataLines detecta automaticamente o header
   },
   bradesco: {
     id: "bradesco",
@@ -79,7 +80,7 @@ export const BANK_TEMPLATES: Record<string, BankTemplate> = {
 export const AUTO_DETECT_KEYWORDS: Record<string, string[]> = {
   caixa: ["caixa", "econômica", "econômica federal", "cef", "bco c6", "c6 s.a", "dados lançamento", "pix enviado", "pix recebido", "pagamento efetuado"],
   inter: ["inter", "banco inter", "bco inter", "data lançamento"],
-  itau: ["itaú", "itau", "itau bank"],
+  itau: ["itaú", "itau", "itau bank", "razão social", "extrato_lançamentos", "saldo em conta corrente", "banco itaucard"],
   bradesco: ["bradesco", "banco bradesco"],
   santander: ["santander", "banco santander", "crédito (r$)", "débito (r$)", "conta corrente", "agencia de marketing"],
   onilx: ["onilx", "onil x", "onil exchange"],

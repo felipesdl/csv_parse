@@ -25,7 +25,19 @@ export const COLORS_GENERIC = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#888
 /**
  * Palavras-chave para detectar headers em CSVs
  */
-export const HEADER_KEYWORDS = ["data", "lançamento", "histórico", "descrição", "valor", "saldo", "referência", "tipo", "transação"];
+export const HEADER_KEYWORDS = [
+  "data",
+  "lançamento",
+  "histórico",
+  "descrição",
+  "valor",
+  "saldo",
+  "referência",
+  "tipo",
+  "transação",
+  "razão social",
+  "cpf/cnpj",
+];
 
 /**
  * Configurações padrão de formatação
