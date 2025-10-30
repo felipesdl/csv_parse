@@ -92,7 +92,7 @@ export function AIChat({ onClose }: AIChatProps = {}) {
                     setInput(suggestion);
                     // Enviar automaticamente após um pequeno delay para garantir que o input foi atualizado
                     setTimeout(() => {
-                      const form = document.querySelector('form') as HTMLFormElement;
+                      const form = document.querySelector("form") as HTMLFormElement;
                       if (form) {
                         form.requestSubmit();
                       }

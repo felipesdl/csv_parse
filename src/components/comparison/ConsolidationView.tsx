@@ -31,10 +31,13 @@ export function ConsolidationView() {
 
     for (const file of comparedFiles) {
       const template = BANK_TEMPLATES[file.bankId];
-      const valueCol = template?.valueColumn;
       const typeCol = template?.typeColumn;
 
-      if (!valueCol) continue;
+      // Usar sempre "Valor" porque o csvParser já normaliza as colunas
+      // (ex: "Valor (R$)" do Itaú vira "Valor")
+      const valueCol = "Valor";
+
+      if (!file.data || file.data.length === 0) continue;
 
       let fileCredito = 0;
       let fileDebito = 0;
