@@ -216,6 +216,25 @@ export async function detectAndParseCSV(file: File, forcedBank?: string): Promis
     }
   }
 
+  // Se o banco tem uma coluna de valor com nome diferente de "Valor", normalizar para "Valor"
+  // Isso garante que os gráficos e análises funcionem corretamente
+  if (template.valueColumn && template.valueColumn !== "Valor" && columns.includes(template.valueColumn)) {
+    const newRows: ParsedRow[] = [];
+
+    for (const row of rows) {
+      const newRow: ParsedRow = { ...row };
+      // Copiar o valor da coluna original para "Valor"
+      newRow["Valor"] = row[template.valueColumn];
+      // Remover a coluna original
+      delete newRow[template.valueColumn];
+      newRows.push(newRow);
+    }
+
+    // Atualizar rows e columns
+    rows = newRows;
+    columns = columns.map((col) => (col === template.valueColumn ? "Valor" : col));
+  }
+
   // Detect month from first date found
   let month = "Desconhecido";
   for (const row of rows) {

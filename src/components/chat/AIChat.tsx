@@ -88,8 +88,17 @@ export function AIChat({ onClose }: AIChatProps = {}) {
               {suggestions.map((suggestion, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setInput(suggestion)}
-                  className="block w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm text-gray-700 transition border border-gray-200 hover:border-gray-300"
+                  onClick={() => {
+                    setInput(suggestion);
+                    // Enviar automaticamente após um pequeno delay para garantir que o input foi atualizado
+                    setTimeout(() => {
+                      const form = document.querySelector('form') as HTMLFormElement;
+                      if (form) {
+                        form.requestSubmit();
+                      }
+                    }, 50);
+                  }}
+                  className="block w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm text-gray-700 transition border border-gray-200 hover:border-gray-300 cursor-pointer"
                 >
                   {suggestion}
                 </button>

@@ -97,8 +97,17 @@ export function ComparisonAIChat({ onClose }: ComparisonAIChatProps = {}) {
                 {suggestions.map((suggestion, idx) => (
                   <button
                     key={idx}
-                    onClick={() => setInput(suggestion)}
-                    className="text-left px-4 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg text-sm transition"
+                    onClick={() => {
+                      setInput(suggestion);
+                      // Enviar automaticamente após um pequeno delay para garantir que o input foi atualizado
+                      setTimeout(() => {
+                        const form = document.querySelector('form') as HTMLFormElement;
+                        if (form) {
+                          form.requestSubmit();
+                        }
+                      }, 50);
+                    }}
+                    className="text-left px-4 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg text-sm transition cursor-pointer"
                   >
                     {suggestion}
                   </button>
