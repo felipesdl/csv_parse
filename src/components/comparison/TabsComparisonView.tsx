@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { BarChart3, Table2, TrendingUp, Database } from "lucide-react";
+import { BarChart3, Table2, TrendingUp, Database, Download } from "lucide-react";
 import { useComparisonStore } from "@/store/comparisonStore";
 import { BANK_TEMPLATES } from "@/lib/bankTemplates";
 import { ComparativeAnalysis } from "./ComparativeAnalysis";
 import { ExtractTablesView } from "./ExtractTablesView";
 import { ConsolidationView } from "./ConsolidationView";
 import { CompleteDataView } from "./CompleteDataView";
+import { useExportPDF } from "@/hooks/useExportPDF";
 
 type TabType = "analysis" | "extracts" | "consolidation" | "complete-data";
 
@@ -31,28 +32,57 @@ interface TabsComparisonViewProps {
 export function TabsComparisonView({ onOpenColumnMapper }: TabsComparisonViewProps) {
   const [activeTab, setActiveTab] = useState<TabType>("analysis");
   const { comparedFiles } = useComparisonStore();
+  const { exportToPDF } = useExportPDF();
 
   if (!comparedFiles || comparedFiles.length < 2) {
     return null;
   }
 
+  const handleExportPDF = () => {
+    const date = new Date().toLocaleDateString("pt-BR").replace(/\//g, "-");
+
+    if (activeTab === "analysis") {
+      exportToPDF("comparative-analysis-content", `analise-comparativa-${date}.pdf`);
+    } else if (activeTab === "consolidation") {
+      exportToPDF("consolidation-content", `consolidacao-${date}.pdf`);
+    }
+  };
+
+  // Determinar se a aba atual pode exportar PDF
+  const canExportPDF = activeTab === "analysis" || activeTab === "consolidation";
+
   return (
     <div className="space-y-6">
       {/* Tabs Navigation */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="flex border-b border-gray-200">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-6 py-4 font-medium transition border-b-2 cursor-pointer ${
-                activeTab === tab.id ? "text-blue-600 border-blue-600 bg-blue-50" : "text-gray-700 border-transparent hover:bg-gray-50"
-              }`}
-            >
-              {tab.icon}
-              {tab.label}
-            </button>
-          ))}
+        <div className="flex items-center justify-between border-b border-gray-200">
+          <div className="flex">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-6 py-4 font-medium transition border-b-2 cursor-pointer ${
+                  activeTab === tab.id ? "text-blue-600 border-blue-600 bg-blue-50" : "text-gray-700 border-transparent hover:bg-gray-50"
+                }`}
+              >
+                {tab.icon}
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Botão de Exportar PDF */}
+          {canExportPDF && (
+            <div className="pr-4">
+              <button
+                onClick={handleExportPDF}
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition shadow-sm cursor-pointer text-sm"
+              >
+                <Download size={16} />
+                Exportar PDF
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Tab Content */}

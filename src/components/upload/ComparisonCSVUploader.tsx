@@ -80,6 +80,7 @@ export function ComparisonCSVUploader({ onUploadSuccess }: ComparisonCSVUploader
             rowCount: rows.length,
             data: rows,
             columns: columns,
+            isActive: true, // Novo arquivo sempre começa ativo
           };
 
           addFile(newFile);

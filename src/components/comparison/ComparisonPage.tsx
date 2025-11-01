@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Plus, Upload, X, Settings, FolderOpen } from "lucide-react";
+import { Plus, Upload, X, Settings, FolderOpen, Eye, EyeOff } from "lucide-react";
 import { ComparisonCSVUploader } from "@/components/upload";
 import { Modal, Card } from "@/components";
 import { FloatingComparisonChatButton } from "@/components/chat";
@@ -35,7 +35,7 @@ export function ComparisonPage() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showFilesModal, setShowFilesModal] = useState(false);
   const [showColumnMapper, setShowColumnMapper] = useState(false);
-  const { comparedFiles, removeFile, commonColumns } = useComparisonStore();
+  const { comparedFiles, removeFile, toggleFileActive, commonColumns } = useComparisonStore();
 
   // Calcular estatísticas de cada arquivo
   const filesStats = useMemo(() => {
@@ -125,22 +125,22 @@ export function ComparisonPage() {
           </div>
           <div className="flex gap-3">
             {comparedFiles && comparedFiles.length > 0 && (
-              <button
-                onClick={() => setShowFilesModal(true)}
-                className="flex items-center gap-2 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 text-sm font-medium transition shadow-sm cursor-pointer"
-              >
-                <FolderOpen size={20} />
-                Gerenciar Arquivos ({comparedFiles.length})
-              </button>
-            )}
-            {comparedFiles && comparedFiles.length > 1 && (
-              <button
-                onClick={() => setShowColumnMapper(true)}
-                className="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium transition shadow-sm cursor-pointer"
-              >
-                <Settings size={20} />
-                Configurar Colunas
-              </button>
+              <>
+                <button
+                  onClick={() => setShowFilesModal(true)}
+                  className="flex items-center gap-2 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 text-sm font-medium transition shadow-sm cursor-pointer"
+                >
+                  <FolderOpen size={20} />
+                  Gerenciar Arquivos ({comparedFiles.length})
+                </button>
+                <button
+                  onClick={() => setShowColumnMapper(true)}
+                  className="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium transition shadow-sm cursor-pointer"
+                >
+                  <Settings size={20} />
+                  Configurar Colunas
+                </button>
+              </>
             )}
             <button
               onClick={() => setShowUploadModal(true)}
@@ -209,19 +209,33 @@ export function ComparisonPage() {
                 {comparedFiles.map((file: ComparedFile) => {
                   const stats = filesStats.get(file.id);
                   return (
-                    <Card key={file.id} className="hover:shadow-md transition">
+                    <Card key={file.id} className={`hover:shadow-md transition ${!file.isActive ? "opacity-50 bg-gray-50" : ""}`}>
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900 text-lg">{formatBankReference(file.bankId, file.month || "")}</h3>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-gray-900 text-lg">{formatBankReference(file.bankId, file.month || "")}</h3>
+                            {!file.isActive && <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Inativo</span>}
+                          </div>
                           {stats && stats.dataInicial && stats.dataFinal && (
                             <p className="text-xs text-gray-600 mt-1">
                               📅 {stats.dataInicial} a {stats.dataFinal}
                             </p>
                           )}
                         </div>
-                        <button onClick={() => removeFile(file.id)} className="p-1 hover:bg-red-50 rounded transition cursor-pointer">
-                          <X size={18} className="text-red-500" />
-                        </button>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => toggleFileActive(file.id)}
+                            className={`p-1 rounded transition cursor-pointer ${
+                              file.isActive ? "hover:bg-orange-50 text-orange-600" : "hover:bg-green-50 text-green-600"
+                            }`}
+                            title={file.isActive ? "Desativar arquivo" : "Ativar arquivo"}
+                          >
+                            {file.isActive ? <Eye size={18} /> : <EyeOff size={18} />}
+                          </button>
+                          <button onClick={() => removeFile(file.id)} className="p-1 hover:bg-red-50 rounded transition cursor-pointer" title="Remover arquivo">
+                            <X size={18} className="text-red-500" />
+                          </button>
+                        </div>
                       </div>
 
                       {stats ? (

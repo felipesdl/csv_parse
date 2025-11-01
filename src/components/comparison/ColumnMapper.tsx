@@ -19,7 +19,10 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
 
   // Auto-detect and auto-save column mappings
   useEffect(() => {
-    if (comparedFiles.length < 2) {
+    // Filtrar apenas arquivos ativos para auto-mapeamento
+    const activeFiles = comparedFiles.filter((f) => f.isActive);
+
+    if (activeFiles.length < 2) {
       setLocalMapping(columnMappings);
       return;
     }
@@ -27,13 +30,13 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
     const autoMapping: ColumnMapping = {};
     const processedPairs = new Set<string>();
 
-    // Para cada arquivo, tentar encontrar correspondências
-    for (const file of comparedFiles) {
+    // Para cada arquivo ativo, tentar encontrar correspondências
+    for (const file of activeFiles) {
       for (const column of file.columns) {
         const columnLower = column.toLowerCase();
 
-        // Procurar por coluna similar em outros arquivos
-        for (const otherFile of comparedFiles) {
+        // Procurar por coluna similar em outros arquivos ativos
+        for (const otherFile of activeFiles) {
           if (otherFile.id === file.id) continue;
 
           for (const otherColumn of otherFile.columns) {
@@ -252,6 +255,9 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
                           <p className="font-medium text-gray-900">{standardName}</p>
                           <p className="text-xs text-gray-600">
                             Mapeado em {Object.keys(fileMapping).length} de {comparedFiles.length} arquivos
+                            {comparedFiles.filter((f) => f.isActive).length < comparedFiles.length && (
+                              <span className="text-gray-500"> ({comparedFiles.filter((f) => f.isActive).length} ativos)</span>
+                            )}
                           </p>
                         </div>
                       </button>
@@ -283,7 +289,10 @@ export function ColumnMapper({ isOpen, onClose }: ColumnMapperProps) {
 
                           return (
                             <div key={file.id} className="space-y-2">
-                              <label className="block text-sm font-medium text-gray-700">{formatBankReference(file.bankId, file.month || "")}</label>
+                              <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
+                                {formatBankReference(file.bankId, file.month || "")}
+                                {!file.isActive && <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">Inativo</span>}
+                              </label>
                               <select
                                 value={fileMapping[file.id] || ""}
                                 onChange={(e) => handleColumnSelect(standardName, file.id, e.target.value)}

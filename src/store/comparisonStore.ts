@@ -10,6 +10,7 @@ export interface ComparedFile {
   rowCount: number;
   data: any[]; // Dados do CSV
   columns: string[]; // Todas as colunas do arquivo
+  isActive: boolean; // Flag para ativar/desativar arquivo nos cálculos
 }
 
 /**
@@ -28,6 +29,7 @@ interface ComparisonState {
   columnMappings: ColumnMapping; // Mapeamento customizado de colunas
   addFile: (file: ComparedFile) => void;
   removeFile: (fileId: string) => void;
+  toggleFileActive: (fileId: string) => void;
   updateCommonColumns: () => void;
   setColumnMapping: (mapping: ColumnMapping) => void;
   clearAll: () => void;
@@ -51,6 +53,14 @@ export const useComparisonStore = create<ComparisonState>()(
       removeFile: (fileId: string) =>
         set((state) => {
           const updated = state.comparedFiles.filter((f) => f.id !== fileId);
+          return {
+            comparedFiles: updated,
+          };
+        }),
+
+      toggleFileActive: (fileId: string) =>
+        set((state) => {
+          const updated = state.comparedFiles.map((f) => (f.id === fileId ? { ...f, isActive: !f.isActive } : f));
           return {
             comparedFiles: updated,
           };
@@ -86,7 +96,21 @@ export const useComparisonStore = create<ComparisonState>()(
     }),
     {
       name: "comparison-store",
-      version: 1,
+      version: 2,
+      migrate: (persistedState: any, version: number) => {
+        // Migração da versão 1 para 2: adicionar isActive aos arquivos
+        if (version === 1) {
+          return {
+            ...persistedState,
+            comparedFiles:
+              persistedState.comparedFiles?.map((file: any) => ({
+                ...file,
+                isActive: file.isActive !== undefined ? file.isActive : true,
+              })) || [],
+          };
+        }
+        return persistedState;
+      },
     }
   )
 );

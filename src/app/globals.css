@@ -1,8 +1,16 @@
 @import "tailwindcss";
 
+/* Fallback para navegadores que não suportam oklch */
+@supports not (color: oklch(0% 0 0)) {
+  * {
+    color-scheme: rgb !important;
+  }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {

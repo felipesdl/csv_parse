@@ -14,7 +14,10 @@
     "ai": "^3.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.3",
     "lucide-react": "^0.548.0",
+    "modern-screenshot": "^4.6.6",
     "next": "15.0.0",
     "openai": "^6.7.0",
     "papaparse": "^5.5.3",
@@ -34,6 +37,7 @@
     "@types/papaparse": "^5.3.16",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "postcss-preset-env": "^10.4.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

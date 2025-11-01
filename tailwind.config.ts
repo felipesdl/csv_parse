@@ -1,0 +1,20 @@
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: ["./src/pages/**/*.{js,ts,jsx,tsx,mdx}", "./src/components/**/*.{js,ts,jsx,tsx,mdx}", "./src/app/**/*.{js,ts,jsx,tsx,mdx}"],
+  theme: {
+    extend: {
+      // Desabilitar oklch e forçar RGB
+      colors: {
+        // Sobrescrever cores padrão para usar RGB
+      },
+    },
+  },
+  plugins: [],
+  // Desabilitar espaço de cores moderno (oklch)
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
+};
+
+export default config;
