@@ -13,6 +13,7 @@ export function Modal({ isOpen, onClose, title, children, size = "md" }: ModalPr
     lg: "w-full max-w-lg",
     xl: "w-full max-w-2xl",
     "2xl": "w-full max-w-4xl",
+    "3xl": "w-[70vw] min-w-[70vw]",
   };
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -27,17 +28,17 @@ export function Modal({ isOpen, onClose, title, children, size = "md" }: ModalPr
       style={{ backgroundColor: "rgba(0, 0, 0, 0.35)" }}
       onClick={handleBackdropClick}
     >
-      <div className={`${sizeClasses[size]} bg-white rounded-lg shadow-lg max-h-[90vh] overflow-y-auto cursor-default`}>
+      <div className={`${sizeClasses[size]} bg-white rounded-lg shadow-lg max-h-[90vh] flex flex-col cursor-default`}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0 bg-white">
           <h2 className="text-xl font-bold text-gray-900">{title}</h2>
           <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded transition cursor-pointer" title="Fechar">
             <X size={24} className="text-gray-900" />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-6">{children}</div>
+        {/* Content with scroll */}
+        <div className="overflow-y-auto flex-1">{children}</div>
       </div>
     </div>
   );

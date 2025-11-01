@@ -3,5 +3,5 @@ export interface ModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
 }

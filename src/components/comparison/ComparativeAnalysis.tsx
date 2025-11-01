@@ -23,10 +23,10 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
     const typeColumnMap: Record<string, string> = {};
 
     for (const file of comparedFiles) {
-      // Procurar pela coluna "Valor"
-      const valorCol = file.columns.find((col) => col.toLowerCase().includes("valor"));
-      if (valorCol) {
-        valueColumnMap[file.id] = valorCol;
+      // Usar sempre "Valor" porque o csvParser já normaliza as colunas
+      // (ex: "Valor (R$)" do Itaú vira "Valor")
+      if (file.columns.includes("Valor")) {
+        valueColumnMap[file.id] = "Valor";
       }
 
       // Procurar por tipo de transação (para separar débito/crédito)
@@ -147,12 +147,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
     <div className="space-y-6">
       {/* Comparação Créditos vs Débitos */}
       <Card>
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-gray-900">Comparação: Créditos vs Débitos</h3>
-          <button onClick={onOpenColumnMapper} className="text-sm px-3 py-1 text-blue-600 hover:bg-blue-50 rounded transition cursor-pointer">
-            ⚙️ Configurar Colunas
-          </button>
-        </div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-6">Comparação: Créditos vs Débitos</h3>
 
         {/* Stacked Bar Chart - Créditos vs Débitos */}
         <ResponsiveContainer width="100%" height={350}>
@@ -184,8 +179,8 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, value }: any) => `${name}: R$ ${(value as number).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`}
-                  outerRadius={80}
+                  label={false}
+                  outerRadius={100}
                   fill="#22c55e"
                   dataKey="value"
                 >
@@ -196,6 +191,19 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
                 <Tooltip formatter={(value) => (typeof value === "number" ? `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : value)} />
               </PieChart>
             </ResponsiveContainer>
+
+            {/* Legenda abaixo do gráfico */}
+            <div className="mt-4 space-y-2">
+              {analysisData.creditDistributionData.map((entry: any, index: number) => (
+                <div key={`legend-credit-${index}`} className="flex items-center justify-between px-3 py-2 bg-green-50 rounded">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded" style={{ backgroundColor: COLORS_CREDIT[index % COLORS_CREDIT.length] }} />
+                    <span className="text-sm font-medium text-gray-700">{entry.name}</span>
+                  </div>
+                  <span className="text-sm font-semibold text-green-700">R$ {entry.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Pie Chart - Débitos */}
@@ -208,8 +216,8 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, value }: any) => `${name}: R$ ${(value as number).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`}
-                  outerRadius={80}
+                  label={false}
+                  outerRadius={100}
                   fill="#ef4444"
                   dataKey="value"
                 >
@@ -220,6 +228,19 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
                 <Tooltip formatter={(value) => (typeof value === "number" ? `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : value)} />
               </PieChart>
             </ResponsiveContainer>
+
+            {/* Legenda abaixo do gráfico */}
+            <div className="mt-4 space-y-2">
+              {analysisData.debitDistributionData.map((entry: any, index: number) => (
+                <div key={`legend-debit-${index}`} className="flex items-center justify-between px-3 py-2 bg-red-50 rounded">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded" style={{ backgroundColor: COLORS_DEBIT[index % COLORS_DEBIT.length] }} />
+                    <span className="text-sm font-medium text-gray-700">{entry.name}</span>
+                  </div>
+                  <span className="text-sm font-semibold text-red-700">R$ {entry.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </Card>

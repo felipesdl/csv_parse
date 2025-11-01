@@ -194,7 +194,10 @@ export function ExtractTablesView() {
         {comparedFiles.map((file) => {
           const bankName = formatBankReference(file.bankId, file.month || "");
           const template = BANK_TEMPLATES[file.bankId];
-          const valueCol = template?.valueColumn;
+
+          // Usar sempre "Valor" porque o csvParser já normaliza as colunas
+          // (ex: "Valor (R$)" do Itaú vira "Valor")
+          const valueCol = "Valor";
 
           // TODAS as colunas originais do arquivo
           const allColumns = file.columns;
