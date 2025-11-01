@@ -1,35 +1,15 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { Plus, Upload, X, Settings, FolderOpen, Eye, EyeOff } from "lucide-react";
 import { ComparisonCSVUploader } from "@/components/upload";
 import { Modal, Card } from "@/components";
 import { FloatingComparisonChatButton } from "@/components/chat";
 import { useComparisonStore, type ComparedFile } from "@/store/comparisonStore";
-import { BANK_TEMPLATES } from "@/lib/bankTemplates";
 import { formatBankReference } from "@/utils/referenceFormatter";
-import { parseValueBR } from "@/utils/formatUtils";
+import { useFileStatistics } from "@/hooks/useFileStatistics";
 import { TabsComparisonView } from "./TabsComparisonView";
 import { ColumnMapper } from "./ColumnMapper";
-
-interface FileStats {
-  totalCredito: number;
-  totalDebito: number;
-  saldoLiquido: number;
-  dataInicial: string | null;
-  dataFinal: string | null;
-  countCredito: number;
-  countDebito: number;
-}
-
-// Função auxiliar para parsear datas no formato dd/mm/yyyy
-function parseDate(dateStr: string): Date | null {
-  if (!dateStr) return null;
-  const match = dateStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-  if (!match) return null;
-  const [, day, month, year] = match;
-  return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-}
 
 export function ComparisonPage() {
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -37,78 +17,8 @@ export function ComparisonPage() {
   const [showColumnMapper, setShowColumnMapper] = useState(false);
   const { comparedFiles, removeFile, toggleFileActive, commonColumns } = useComparisonStore();
 
-  // Calcular estatísticas de cada arquivo
-  const filesStats = useMemo(() => {
-    const statsMap = new Map<string, FileStats>();
-
-    comparedFiles.forEach((file) => {
-      const template = BANK_TEMPLATES[file.bankId];
-      const typeCol = template?.typeColumn;
-      const dateCol = template?.dateColumn;
-      const valueCol = "Valor"; // Sempre normalizado
-
-      let fileCredito = 0;
-      let fileDebito = 0;
-      let fileCountCredito = 0;
-      let fileCountDebito = 0;
-      let dataInicial: Date | null = null;
-      let dataFinal: Date | null = null;
-
-      if (file.data && file.data.length > 0) {
-        for (const row of file.data) {
-          const valor = parseValueBR(row[valueCol]);
-
-          if (valor !== 0) {
-            // Calcular crédito/débito
-            if (typeCol && row[typeCol]) {
-              const tipoStr = String(row[typeCol]).toUpperCase();
-              if (tipoStr.includes("CRÉDITO")) {
-                fileCredito += valor;
-                fileCountCredito++;
-              } else if (tipoStr.includes("DÉBITO")) {
-                fileDebito += valor;
-                fileCountDebito++;
-              }
-            } else {
-              if (valor > 0) {
-                fileCredito += valor;
-                fileCountCredito++;
-              } else {
-                fileDebito += valor;
-                fileCountDebito++;
-              }
-            }
-          }
-
-          // Calcular datas inicial e final
-          if (dateCol && row[dateCol]) {
-            const dateStr = String(row[dateCol]);
-            const date = parseDate(dateStr);
-            if (date) {
-              if (!dataInicial || date < dataInicial) {
-                dataInicial = date;
-              }
-              if (!dataFinal || date > dataFinal) {
-                dataFinal = date;
-              }
-            }
-          }
-        }
-      }
-
-      statsMap.set(file.id, {
-        totalCredito: fileCredito,
-        totalDebito: fileDebito,
-        saldoLiquido: fileCredito + fileDebito,
-        dataInicial: dataInicial ? dataInicial.toLocaleDateString("pt-BR") : null,
-        dataFinal: dataFinal ? dataFinal.toLocaleDateString("pt-BR") : null,
-        countCredito: fileCountCredito,
-        countDebito: fileCountDebito,
-      });
-    });
-
-    return statsMap;
-  }, [comparedFiles]);
+  // Calcular estatísticas de cada arquivo usando o hook
+  const filesStats = useFileStatistics(comparedFiles);
 
   const handleUploadSuccess = () => {
     setShowUploadModal(false);

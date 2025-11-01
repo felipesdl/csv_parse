@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState, useCallback } from "react";
 import { useComparisonStore } from "@/store/comparisonStore";
+import { useColumnMapping } from "@/hooks/useColumnMapping";
 import { ParsedRow, ColumnSettings, FormatSettings } from "@/types";
 import { formatValue, isNumericValue, extractNumericValue } from "@/utils";
 import { ChevronUp, ChevronDown, Copy, Download, Eye, EyeOff, Settings } from "lucide-react";
@@ -12,7 +13,8 @@ import { formatBankReference } from "@/utils/referenceFormatter";
 import type { ColumnFilter } from "../filters/types";
 
 export function CompleteDataView() {
-  const { comparedFiles, columnMappings } = useComparisonStore();
+  const { comparedFiles } = useComparisonStore();
+  const { getStandardName, getMappedColumnsForFile: getColumnMappings, columnMappings } = useColumnMapping();
   const { success } = useToast();
 
   // Format settings
@@ -32,34 +34,6 @@ export function CompleteDataView() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
 
-  // Helper function to get the mapped column name for a file
-  const getMappedColumnName = useCallback(
-    (fileId: string, columnName: string): string | null => {
-      // Check if this column is part of a mapping and return the standardName
-      for (const [mappedName, fileMap] of Object.entries(columnMappings)) {
-        if (fileMap[fileId] === columnName) {
-          return mappedName;
-        }
-      }
-      return null;
-    },
-    [columnMappings]
-  );
-
-  // Get list of all mapped columns for a file (to exclude them from unmatched columns)
-  const getMappedColumnsForFile = useCallback(
-    (fileId: string): Set<string> => {
-      const mapped = new Set<string>();
-      for (const fileMap of Object.values(columnMappings)) {
-        if (fileMap[fileId]) {
-          mapped.add(fileMap[fileId]);
-        }
-      }
-      return mapped;
-    },
-    [columnMappings]
-  );
-
   // Consolidate all data from all files using column mappings
   const consolidatedData = useMemo(() => {
     if (!comparedFiles || comparedFiles.length === 0) {
@@ -78,10 +52,11 @@ export function CompleteDataView() {
     // Add unmapped columns from each file
     comparedFiles.forEach((file) => {
       banks.push(formatBankReference(file.bankId, file.month || ""));
-      const mappedCols = getMappedColumnsForFile(file.id);
+      const mappedCols = getColumnMappings(file.id);
+      const mappedColNames = new Set(mappedCols.map((m) => m.actualName));
 
       file.columns.forEach((col) => {
-        if (!mappedCols.has(col)) {
+        if (!mappedColNames.has(col)) {
           // This column is not mapped, add it as is
           allColumns.add(col);
         }
@@ -96,14 +71,8 @@ export function CompleteDataView() {
 
         // Map each value to its mapped column name or original name
         file.columns.forEach((col) => {
-          const mappedName = getMappedColumnName(file.id, col);
-          if (mappedName) {
-            // This column is mapped
-            mappedRow[mappedName] = row[col];
-          } else {
-            // This column is not mapped, use original name
-            mappedRow[col] = row[col];
-          }
+          const standardName = getStandardName(file.id, col);
+          mappedRow[standardName] = row[col];
         });
 
         consolidatedRows.push(mappedRow);
@@ -115,7 +84,7 @@ export function CompleteDataView() {
       columns: ["Banco", ...Array.from(allColumns).sort()],
       banks,
     };
-  }, [comparedFiles, columnMappings, getMappedColumnName, getMappedColumnsForFile]);
+  }, [comparedFiles, columnMappings, getStandardName, getColumnMappings]);
 
   // Initialize column settings
   useMemo(() => {

@@ -2,44 +2,21 @@
 
 import React, { useMemo } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
-import { EyeOff } from "lucide-react";
 import { useComparisonStore } from "@/store/comparisonStore";
+import { useColumnMapping } from "@/hooks/useColumnMapping";
 import { BANK_TEMPLATES } from "@/lib/bankTemplates";
 import { parseValueBR, COLORS_GENERIC, COLORS_CREDIT, COLORS_DEBIT } from "@/utils";
 import { formatBankReference } from "@/utils/referenceFormatter";
 import { Card } from "@/components/ui";
+import { InactiveFilesAlert } from "./InactiveFilesAlert";
 
 interface ComparativeAnalysisProps {
   onOpenColumnMapper: () => void;
 }
 
 export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisProps) {
-  const { comparedFiles, columnMappings } = useComparisonStore();
-
-  // Helper function to get the actual column name for a file using mappings
-  const getMappedColumn = (fileId: string, standardName: string): string | undefined => {
-    // First check if there's a mapping for this standard name
-    if (columnMappings[standardName] && columnMappings[standardName][fileId]) {
-      return columnMappings[standardName][fileId];
-    }
-
-    // Fallback: find the column in the file that matches the standard name
-    const file = comparedFiles.find((f) => f.id === fileId);
-    if (file) {
-      // Direct match
-      if (file.columns.includes(standardName)) {
-        return standardName;
-      }
-
-      // For "Valor", try common variations
-      if (standardName === "Valor") {
-        const valorCol = file.columns.find((col) => col === "Valor" || col.toLowerCase().includes("valor") || col.toLowerCase().includes("value"));
-        if (valorCol) return valorCol;
-      }
-    }
-
-    return undefined;
-  };
+  const { comparedFiles } = useComparisonStore();
+  const { getMappedColumn } = useColumnMapping();
 
   const analysisData = useMemo(() => {
     // Filtrar apenas arquivos ativos
@@ -159,7 +136,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
       debitDistributionData,
       hasData: bankStats.length > 0,
     };
-  }, [comparedFiles, columnMappings]);
+  }, [comparedFiles, getMappedColumn]);
 
   const inactiveFilesCount = comparedFiles.filter((f) => !f.isActive).length;
 
@@ -178,14 +155,7 @@ export function ComparativeAnalysis({ onOpenColumnMapper }: ComparativeAnalysisP
   return (
     <div className="flex flex-col gap-4">
       {/* Aviso de arquivos inativos */}
-      {inactiveFilesCount > 0 && (
-        <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 flex items-center gap-2">
-          <EyeOff size={18} className="text-orange-600 flex-shrink-0" />
-          <p className="text-sm text-orange-900">
-            <strong>{inactiveFilesCount}</strong> arquivo(s) inativo(s) não incluído(s) nesta análise
-          </p>
-        </div>
-      )}
+      <InactiveFilesAlert count={inactiveFilesCount} context="análise" />
       {/* Conteúdo para exportação */}
       <div id="comparative-analysis-content" className="grid gap-4">
         {/* Comparação Créditos vs Débitos */}
